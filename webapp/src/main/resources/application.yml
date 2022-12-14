@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: cslgfsyyxt
+  profiles:
+    active: dev
