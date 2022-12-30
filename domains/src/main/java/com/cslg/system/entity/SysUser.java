@@ -20,6 +20,10 @@ public class SysUser extends BaseEntity {
     @TableField("username")
     private String username;
 
+    @ApiModelProperty(value = "学号")
+    @TableField("stu_no")
+    private String stuNo;
+
     @ApiModelProperty(value = "密码")
     @TableField("password")
     private String password;

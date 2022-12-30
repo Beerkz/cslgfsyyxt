@@ -26,7 +26,7 @@ public interface SysRoleRepository extends BaseMapper<SysRole> {
      * @param pageRoleCondition 分页条件
      * @return
      */
-    List<SysRole> pageRoleByCondition(@Param("condition") PageRoleCondition pageRoleCondition);
+    List<SysRole> pageRoleByCondition(PageRoleCondition pageRoleCondition);
 
     /**
      * 插入角色
@@ -36,5 +36,13 @@ public interface SysRoleRepository extends BaseMapper<SysRole> {
      */
     Integer insertRole(SysRole sysRole);
 
+    /**
+     * 更新角色
+     *
+     * @param sysRole
+     * @return
+     */
     Integer updateRole(SysRole sysRole);
+
+
 }

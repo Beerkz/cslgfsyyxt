@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.system.repository.SysUserRepository">
+
+    <sql id="pagedUser">
+        id,
+        stu_no,
+        username,
+        name,
+        phone,
+        head_url,
+        dept_id,
+        post_id,
+        password,
+        status,
+        create_time,
+        update_time,
+        is_deleted,
+        description
+    </sql>
+    <!-- List<SysUser> pagedUserByCondition(PageUserCondition pageUserCondition); -->
+    <select id="pagedUserByCondition" resultType="com.cslg.system.entity.SysUser">
+        select <include refid="pagedUser"></include>,
+        (select name from sys_post sp where sp.id = su.post_id ) as postName,
+        (select name from sys_dept sd where sd.id = su.dept_id ) as deptName
+        from sys_user su
+        <where>
+            <if test="stuNo != null and stuNo != '' ">
+                and su.stu_no = #{stuNo}
+            </if>
+            <if test="name!=null and name !=''">
+                and su.name like concat(#{name},'%')
+            </if>
+            <if test="username != null and username!=''">
+                and su.username like concat(#{username},'%')
+            </if>
+            <if test="phone != null and phone !=''">
+                and su.phone = #{phone}
+            </if>
+            <if test="deptId != null and deptId != '' ">
+                and su.dept_id = #{deptId}
+            </if>
+            <if test=" positionId !=null and positionId != '' ">
+                and su.position_id = #{positionId}
+            </if>
+            <if test=" roleId != null and roleId != '' ">
+                and su.role_id = #{roleId}
+            </if>
+            <if test="beginDate!=null and endDate!=null and beginDate!='' and endDate!='' ">
+                and su.create_time >= str_to_date(#{beginDate},'%Y-%m-%d %H:%i:%s')
+                and str_to_date(#{endDate},'%Y-%m-%d %H:%i:%s') >= su.create_time
+            </if>
+            and is_deleted = 0
+        </where>
+        order by su.create_time desc
+        <if test="start !=null and limit >0">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+
+    <!-- Long countUserByCondition(PageUserCondition pageUserCondition); -->
+    <select id="countUserByCondition" resultType="java.lang.Long">
+        select count(*)
+        from sys_user su
+        <where>
+            <if test="stuNo != null and stuNo != '' ">
+                and su.stu_no = #{stuNo}
+            </if>
+            <if test="name!=null and name !=''">
+                and su.name like concat(#{name},'%')
+            </if>
+            <if test="username != null and username!=''">
+                and su.username like concat(#{username},'%')
+            </if>
+            <if test="phone != null and phone !=''">
+                and su.phone = #{phone}
+            </if>
+            <if test="deptId != null and deptId != '' ">
+                and su.dept_id = #{deptId}
+            </if>
+            <if test=" positionId !=null and positionId != '' ">
+                and su.position_id = #{positionId}
+            </if>
+            <if test=" roleId != null and roleId != '' ">
+                and su.role_id = #{roleId}
+            </if>
+            <if test="beginDate!=null and endDate!=null and beginDate!='' and endDate!='' ">
+                and su.create_time >= str_to_date(#{beginDate},'%Y-%m-%d %H:%i:%s')
+                and str_to_date(#{endDate},'%Y-%m-%d %H:%i:%s') >= su.create_time
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+    <!-- Long insertUser(SysUser sysUser); -->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stuNo != null and stuNo != ''">
+                stu_no,
+            </if>
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="headUrl != null and headUrl != ''">
+                head_url,
+            </if>
+            <if test="deptId != null and deptId != ''">
+                dept_id,
+            </if>
+            <if test="postId != null and postId != ''">
+                post_id,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            status
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stuNo != null and stuNo != ''">
+                #{stuNo},
+            </if>
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="headUrl != null and headUrl != ''">
+                #{headUrl},
+            </if>
+            <if test="deptId != null and deptId != ''">
+                #{deptId},
+            </if>
+            <if test="postId != null and postId != ''">
+                #{postId},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            0
+        </trim>
+    </insert>
+
+    <!-- Long updateUser(SysUser sysUser); -->
+    <update id="updateUser">
+        update sys_user
+        set stu_no      = #{stuNo},
+            username    = #{username},
+            password    = #{password},
+            name        = #{name},
+            phone       = #{phone},
+            head_url    = #{headUrl},
+            dept_id     = #{deptId},
+            post_id     = #{postId},
+            description = #{description},
+            update_time = current_timestamp
+        where id = #{id}
+    </update>
+
+    <!-- Long insertUserRoleRelationship(List<Long> items); -->
+    <insert id="insertUserRoleRelationship">
+        insert into
+        sys_user_role(
+        role_id,
+        user_id
+        ) values
+        <foreach collection="items" item="item" separator=",">
+            (
+            #{item},
+            #{id}
+            )
+        </foreach>
+
+    </insert>
+
+    <!-- Long deleteUserRoleRelationship(@Param("id") String id, @Param("items") List<String> items) -->
+    <update id="deleteUserRoleRelationship">
+        update sys_user_role
+        set is_deleted = 1
+        where user_id = #{id}
+    </update>
+
+    <!-- Long enableUser(SysUser sysUser); -->
+    <update id="enableUser">
+        update sys_user
+        set status = #{status}
+        where id = #{id}
+    </update>
+
+    <resultMap id="getUserRoleRelation" type="com.cslg.system.entity.SysUser">
+        <id property="id" column="id"></id>
+        <collection property="roleList"
+                    column="id"
+                    ofType="com.cslg.system.entity.SysRole"
+                    select="com.cslg.system.repository.SysUserRepository.getUserRole"
+        >
+
+        </collection>
+    </resultMap>
+    <!-- SysUser getUserById(@Param("id") Long id); -->
+    <select id="getUserById" resultMap="getUserRoleRelation">
+        select
+        <include refid="pagedUser"></include>
+        from sys_user
+        where id =#{id}
+    </select>
+
+    <!-- List<SysRole> getUserRole(@Param("id") id) -->
+    <select id="getUserRole" resultType="com.cslg.system.entity.SysRole">
+        select sr.id,
+               sr.role_name,
+               sr.role_code,
+               sr.description,
+               sr.create_time,
+               sr.update_time
+        from sys_user_role sur
+                 left join sys_role sr on sr.id = sur.role_id
+        where sur.user_id = #{id}
+          and sur.is_deleted = 0
+
+    </select>
+
+    <!-- Long deleteUser(@Param("id") Long id); -->
+    <update id="deleteUser">
+        update sys_user
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+
+</mapper>

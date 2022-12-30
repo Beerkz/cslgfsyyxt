@@ -5,7 +5,7 @@ import com.cslg.system.SysRoleService;
 import com.cslg.system.entity.SysRole;
 import com.cslg.system.param.PageRoleCondition;
 import com.cslg.system.repository.SysRoleRepository;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.cslg.vo.JsonPagedVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +27,15 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleRepository, SysRole> 
      * @return
      */
     @Override
-    public List<SysRole> pageRoleByCondition(PageRoleCondition pageRoleCondition) {
+    public JsonPagedVO<SysRole> pageRoleByCondition(PageRoleCondition pageRoleCondition) {
         final List<SysRole> sysRoles;
-        if (sysRoleRepository.countRoleByCondition(pageRoleCondition) > 0) {
+        final Long count = sysRoleRepository.countRoleByCondition(pageRoleCondition);
+        if (count > 0) {
             sysRoles = sysRoleRepository.pageRoleByCondition(pageRoleCondition);
         } else {
             sysRoles = Collections.emptyList();
         }
-        return sysRoles;
+        return new JsonPagedVO<>(sysRoles, count);
     }
 
     /**
@@ -49,7 +49,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleRepository, SysRole> 
         //根据是否传递id判断是增加还是删除
         log.info("用户传递过来的id:{}", sysRole);
         Integer integer;
-        if (!StringUtils.hasText(sysRole.getId())) {
+        if (sysRole.getId() != null) {
             integer = sysRoleRepository.insertRole(sysRole);
 
         } else {

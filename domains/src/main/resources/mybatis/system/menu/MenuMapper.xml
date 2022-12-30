@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.system.repository.SysMenuRepository">
+
+    <sql id="sysMenu">
+        id,
+            parent_id,
+            name,
+            type,
+            path,
+            component,
+            perms,
+            icons,
+            sort_value,
+            status,
+            create_time,
+            update_time,
+            is_deleted
+    </sql>
+    <!-- List<SysMenu> findAllMenu(); -->
+    <select id="findAllMenu" resultType="com.cslg.system.entity.SysMenu">
+        select
+        <include refid="sysMenu"></include>
+        from sys_menu
+    </select>
+
+    <!-- void insertMenu(SysMenu sysMenu); -->
+    <insert id="insertMenu">
+        insert into sys_menu
+        <trim prefix="(" suffix=")">
+            <if test="parentId != null and parentId != '' ">
+                parent_id,
+            </if>
+            <if test="name !=null and name !='' ">
+                name,
+            </if>
+            <if test="type != null and type !='' ">
+                type,
+            </if>
+            <if test="path !=null and path !='' ">
+                path,
+            </if>
+            <if test="component !=null and component !='' ">
+                component,
+            </if>
+            <if test="perms !=null and perms !=''">
+                perms,
+            </if>
+            <if test="icon != null and icon != '' ">
+                icon,
+            </if>
+            <if test="sortValue != null and sortValue != '' ">
+                sort_value,
+            </if>
+            status
+        </trim>
+
+        <trim prefix="values(" suffix=")">
+            <if test="parentId != null and parentId != '' ">
+                #{parentId},
+            </if>
+            <if test="name !=null and name !='' ">
+                #{name},
+            </if>
+            <if test="type != null and type !='' ">
+                #{type},
+            </if>
+            <if test="path !=null and path !='' ">
+                #{path},
+            </if>
+            <if test="component !=null and component !='' ">
+                #{component},
+            </if>
+            <if test="perms !=null and perms !=''">
+                #{perms},
+            </if>
+            <if test="icon != null and icon != '' ">
+                #{icon},
+            </if>
+            <if test="sortValue != null and sortValue != '' ">
+                #{sortValue},
+            </if>
+            1
+        </trim>
+    </insert>
+
+    <!-- void updateMenu(SysMenu sysMenu); -->
+    <update id="updateMenu">
+        update sys_menu
+        set parent_id  = #{parentId},
+            name       =#{name},
+            type= #{type},
+            path       = #{path},
+            component  = #{component},
+            perms      = #{perms},
+            icon       = #{icon},
+            sort_value = #{sortValue}
+    </update>
+
+    <!-- void deleteMenuBtn(@Param("id") Long parentId); -->
+    <update id="deleteMenuBtn">
+        update sys_menu
+        set is_deleted = 1
+        where parent_id = #{id}
+          and type = 2
+    </update>
+</mapper>

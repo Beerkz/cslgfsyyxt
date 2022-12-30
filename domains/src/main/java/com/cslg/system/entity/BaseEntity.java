@@ -16,13 +16,13 @@ import java.util.Map;
 public class BaseEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
-    private String id;
+    private Long id;
 
     @TableField("create_time")
-    private Date createTime;
+    private String createTime;
 
     @TableField("update_time")
-    private Date updateTime;
+    private String updateTime;
 
     @TableLogic  //逻辑删除 默认效果 0 没有删除 1 已经删除
     @TableField("is_deleted")

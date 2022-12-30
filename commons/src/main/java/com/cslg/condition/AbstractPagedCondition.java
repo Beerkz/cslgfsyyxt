@@ -10,4 +10,5 @@ import lombok.ToString;
 public abstract class AbstractPagedCondition {
     private Integer start;
     private Integer limit;
+    private Integer page;
 }

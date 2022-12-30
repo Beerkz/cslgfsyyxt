@@ -16,3 +16,6 @@ spring:
       exclude:
         - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
         - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
