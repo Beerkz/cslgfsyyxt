@@ -15,11 +15,11 @@ public class SysRoleMenu extends BaseEntity {
 
     @ApiModelProperty(value = "角色id")
     @TableField("role_id")
-    private String roleId;
+    private Long roleId;
 
     @ApiModelProperty(value = "菜单id")
     @TableField("menu_id")
-    private String menuId;
+    private Long menuId;
 
 }
 

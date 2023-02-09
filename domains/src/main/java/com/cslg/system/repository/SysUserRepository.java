@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cslg.system.entity.SysRole;
 import com.cslg.system.entity.SysUser;
 import com.cslg.system.param.PageUserCondition;
+import com.cslg.system.vo.LoginVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.core.parameters.P;
@@ -33,5 +34,7 @@ public interface SysUserRepository extends BaseMapper<SysUser> {
     List<SysRole> getUserRole(@Param("id") Long id);
 
     Long deleteUser(@Param("id") Long id);
+
+    SysUser getUserByNameOrStuNo(LoginVo loginVo);
 
 }

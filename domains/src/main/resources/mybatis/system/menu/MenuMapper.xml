@@ -11,18 +11,37 @@
             path,
             component,
             perms,
-            icons,
+            icon,
             sort_value,
             status,
             create_time,
             update_time,
             is_deleted
     </sql>
+    <resultMap id="findMenuBtn" type="com.cslg.system.entity.SysMenu">
+        <id column="id" property="id"></id>
+        <collection property="children"
+                    column="id"
+                    ofType="com.cslg.system.entity.SysMenu"
+                    select="com.cslg.system.repository.SysMenuRepository.findAllBtn"
+        >
+        </collection>
+    </resultMap>
     <!-- List<SysMenu> findAllMenu(); -->
-    <select id="findAllMenu" resultType="com.cslg.system.entity.SysMenu">
+    <select id="findAllMenu" resultMap="findMenuBtn">
         select
         <include refid="sysMenu"></include>
         from sys_menu
+        where type != 2 and is_deleted = 0
+        order by sort_value
+    </select>
+    <!-- List<SysMenu> findAllBtn(); -->
+    <select id="findAllBtn" resultType="com.cslg.system.entity.SysMenu">
+        select
+        <include refid="sysMenu"></include>
+        from sys_menu
+        where parent_id=#{id} and is_deleted = 0
+        order by id
     </select>
 
     <!-- void insertMenu(SysMenu sysMenu); -->
@@ -96,6 +115,7 @@
             perms      = #{perms},
             icon       = #{icon},
             sort_value = #{sortValue}
+        where id = #{id}
     </update>
 
     <!-- void deleteMenuBtn(@Param("id") Long parentId); -->
@@ -105,4 +125,57 @@
         where parent_id = #{id}
           and type = 2
     </update>
+
+    <!-- SysMenu findMenuById(@Param("id") Long id); -->
+    <select id="findMenuById" resultMap="findMenuBtn">
+        select
+        <include refid="sysMenu"></include>
+        from sys_menu
+        where id = #{id}
+    </select>
+
+    <!-- void deleteMenu(@Param("id") Long id); -->
+    <update id="deleteMenu">
+        update sys_menu
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+
+    <!-- List<SysMenu> findMenuOrBtnById(@Param("id") Long id); -->
+    <select id="findMenuByParentId" resultType="com.cslg.system.entity.SysMenu">
+        select
+        <include refid="sysMenu"></include>
+        from sys_menu
+        where parent_id = #{id}
+    </select>
+
+    <!-- List<SysMenu> findMenuByRoleId(@Param("id") Long id); -->
+    <select id="findMenuByRoleId" resultType="com.cslg.system.entity.SysMenu">
+        select sm.id,
+               sm.parent_id,
+               sm.name,
+               sm.type,
+               sm.path,
+               sm.component,
+               sm.perms,
+               sm.icon,
+               sm.sort_value,
+               sm.status,
+               sm.create_time,
+               sm.update_time,
+               sm.is_deleted
+        from sys_menu sm
+                 inner join sys_role_menu srm on sm.id = srm.menu_id and srm.role_id = #{id} and srm.is_deleted = 0
+        where sm.is_deleted = 0
+          and sm.status = 1
+    </select>
+
+    <!-- List<SysMenu> findAllMenuAndBtn(); -->
+    <select id="findAllMenuAndBtn" resultType="com.cslg.system.entity.SysMenu">
+        select
+        <include refid="sysMenu"></include>
+        from sys_menu
+        where is_deleted = 0
+        order by id,sort_value
+    </select>
 </mapper>

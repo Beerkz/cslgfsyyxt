@@ -6,9 +6,10 @@ import com.cslg.system.entity.SysRole;
 import com.cslg.system.entity.SysUser;
 import com.cslg.system.param.PageUserCondition;
 import com.cslg.system.repository.SysUserRepository;
+import com.cslg.system.vo.LoginVo;
+import com.cslg.utils.MD5Utils;
 import com.cslg.vo.JsonPagedVO;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class SysUserServiceImpl extends ServiceImpl<SysUserRepository, SysUser> implements SysUserService {
 
     private final SysUserRepository sysUserRepository;
+
 
     /**
      * 角色分页查询
@@ -50,6 +52,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserRepository, SysUser> 
     @Override
     public void insertOrUpdateUser(SysUser sysUser) {
         final List<Long> ids;
+        sysUser.setPassword(MD5Utils.Encrypt(sysUser.getPassword()));
         if (!sysUser.getRoleList().isEmpty()) {
             ids = sysUser.getRoleList().stream().map(SysRole::getId).collect(Collectors.toList());
         } else {
@@ -96,5 +99,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserRepository, SysUser> 
     public void deleteUser(Long id) {
         sysUserRepository.deleteUser(id);
         sysUserRepository.deleteUserRoleRelationship(id);
+    }
+
+    @Override
+    public SysUser getUserByNameOrStuNo(LoginVo loginVo) {
+        SysUser userByNameOrStuNo = sysUserRepository.getUserByNameOrStuNo(loginVo);
+        return userByNameOrStuNo;
     }
 }

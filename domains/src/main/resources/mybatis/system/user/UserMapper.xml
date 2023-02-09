@@ -245,4 +245,19 @@
         where id = #{id}
     </update>
 
+    <!-- SysUser getUserByNameOrStuNo(LoginVo loginVo); -->
+    <select id="getUserByNameOrStuNo" resultType="com.cslg.system.entity.SysUser">
+        select
+        <include refid="pagedUser"></include>
+        from sys_user su
+        <where>
+            <if test="username!=null and username !='' ">
+                and su.username = #{username}
+            </if>
+            <if test="stuNo != null and stuNo !='' ">
+                and su.stu_no = #{stuNo}
+            </if>
+        </where>
+    </select>
+
 </mapper>

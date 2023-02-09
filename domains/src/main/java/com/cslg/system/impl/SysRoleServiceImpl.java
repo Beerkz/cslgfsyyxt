@@ -49,7 +49,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleRepository, SysRole> 
         //根据是否传递id判断是增加还是删除
         log.info("用户传递过来的id:{}", sysRole);
         Integer integer;
-        if (sysRole.getId() != null) {
+        if (sysRole.getId() == null) {
             integer = sysRoleRepository.insertRole(sysRole);
 
         } else {
