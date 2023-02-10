@@ -1,5 +1,6 @@
 package com.cslg.system.impl;
 
+import com.cslg.secruity.vo.RouterVo;
 import com.cslg.system.SysMenuService;
 import com.cslg.system.entity.SysMenu;
 import com.cslg.system.repository.SysMenuRepository;
@@ -127,6 +128,28 @@ public class SysMenuServiceImpl implements SysMenuService {
         if (assignMenuVo.getMenuIdLists() != null && !assignMenuVo.getMenuIdLists().isEmpty()) {
             sysRoleMenuRepository.insertRoleMenu(assignMenuVo.getRoleId(), assignMenuVo.getMenuIdLists());
         }
+    }
+
+    /**
+     * 获取用户菜单信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public List<RouterVo> getUserMenuList(String id) {
+        return null;
+    }
+
+    /**
+     * 获取
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public List<String> getUserButtonList(String id) {
+        return null;
     }
 
     /**

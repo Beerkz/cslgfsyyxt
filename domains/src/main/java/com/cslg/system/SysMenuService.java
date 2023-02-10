@@ -1,5 +1,6 @@
 package com.cslg.system;
 
+import com.cslg.secruity.vo.RouterVo;
 import com.cslg.system.entity.SysMenu;
 import com.cslg.system.vo.AssignMenuVo;
 
@@ -17,4 +18,8 @@ public interface SysMenuService {
     List<SysMenu> findMenuByRoleId(Long id);
 
     void doAssign(AssignMenuVo assignMenuVo);
+
+    List<RouterVo> getUserMenuList(String id);
+
+    List<String> getUserButtonList(String id);
 }

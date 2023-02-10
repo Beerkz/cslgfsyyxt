@@ -66,7 +66,6 @@ public class SecurityServiceImpl implements SecurityService {
         Map<String, Object> map = new HashMap<>();
         map.put("name", sysUser.getName());
         map.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-
         return null;
     }
 }

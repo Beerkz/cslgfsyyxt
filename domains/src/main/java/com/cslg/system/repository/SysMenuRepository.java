@@ -1,5 +1,6 @@
 package com.cslg.system.repository;
 
+import com.cslg.secruity.vo.RouterVo;
 import com.cslg.system.entity.SysMenu;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -85,5 +86,9 @@ public interface SysMenuRepository {
      */
     List<SysMenu> findAllMenuAndBtn();
 
+    /**
+     * 根据用户id查询所有菜单
+     */
+    List<RouterVo> getUserMenuList(@Param("id") String userId);
 
 }

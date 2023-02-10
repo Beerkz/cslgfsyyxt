@@ -4,7 +4,7 @@
 <mapper namespace="com.cslg.system.repository.SysMenuRepository">
 
     <sql id="sysMenu">
-        id,
+            id,
             parent_id,
             name,
             type,
@@ -177,5 +177,23 @@
         from sys_menu
         where is_deleted = 0
         order by id,sort_value
+    </select>
+
+    <!-- List<RouterVo> getUserMenuList(@Param("id") String userId); -->
+    <select id="getUserMenuList">
+        select
+        <include refid="sysMenu"></include>
+        where
+        from sys_menu sm
+        where sm.id in (
+        select srm.menu_id
+        from sys_role_menu srm
+        where srm.role_id in
+        (
+        select sr.role_id
+        from sys_user_role sr
+        where sr.user_id = #{userId}
+        )
+        )
     </select>
 </mapper>
