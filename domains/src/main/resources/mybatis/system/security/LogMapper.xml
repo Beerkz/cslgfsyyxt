@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.secruity.repository.LogRepository">
+    <!-- void insertLoginLog(SysLoginLog sysLoginLog); -->
+    <insert id="insertLoginLog">
+        insert into sys_login_log(username,
+                                  ipaddr,
+                                  status,
+                                  msg,
+                                  access_time)
+        values (#{username},
+                #{ipaddr},
+                #{status},
+                #{msg},
+                curdate())
+    </insert>
+
+    <!-- void insertOperLog(SysOperLog sysOperLog); -->
+    <insert id="insertOperLog">
+        insert into sys_oper_log(title,
+                                 business_type,
+                                 method,
+                                 request_method,
+                                 operator_type,
+                                 oper_name,
+                                 oper_url,
+                                 oper_ip,
+                                 oper_param,
+                                 status,
+                                 oper_time)
+        values (#{title},
+                #{businessType},
+                #{method},
+                #{requestMethod},
+                #{operatorType},
+                #{operName},
+                #{operUrl},
+                #{operIp},
+                #{operParam},
+                #{status},
+                #{operTime})
+    </insert>
+    <sql id="loginLog">
+        id,
+        username,
+        ipaddr,
+        status,
+        msg,
+        access_time,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+    <!-- List<SysLoginLog> pageLoginLog(PageLogCondition pageLogCondition); -->
+    <select id="pageLoginLog" resultType="com.cslg.secruity.entity.SysLoginLog">
+        select
+        <include refid="loginLog"></include>
+        from sys_login_log sll
+        <where>
+            <if test="username!='' and username!=null">
+                username like concat(#{username},'%')
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{createTime}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                date_fomat(sll.create_time,'%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+        order by sll.create_time desc
+        <if test="start !=null and limit >0">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <!-- List<SysLoginLog> countPageLoginLog(PageLogCondition pageLogCondition); -->
+    <select id="countPageLoginLog" resultType="java.lang.Long">
+        select count(1)
+        from sys_login_log sll
+        <where>
+            <if test="username!='' and username!=null">
+                username like concat(#{username},'%')
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{createTime}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                date_fomat(sll.create_time,'%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- Long countPageOperLog(PageOperCondition pageOperCondition); -->
+    <select id="countPageOperLog">
+        select count(1)
+        from sys_oper_log
+    </select>
+</mapper>

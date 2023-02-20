@@ -175,15 +175,14 @@
         select
         <include refid="sysMenu"></include>
         from sys_menu
-        where is_deleted = 0
+        where is_deleted = 0 and status = 1
         order by id,sort_value
     </select>
 
     <!-- List<RouterVo> getUserMenuList(@Param("id") String userId); -->
-    <select id="getUserMenuList">
+    <select id="getUserMenuList" resultType="com.cslg.system.entity.SysMenu">
         select
         <include refid="sysMenu"></include>
-        where
         from sys_menu sm
         where sm.id in (
         select srm.menu_id
@@ -192,8 +191,25 @@
         (
         select sr.role_id
         from sys_user_role sr
-        where sr.user_id = #{userId}
-        )
-        )
+        where sr.user_id = #{id} and sr.is_deleted = 0
+        ) and srm.is_deleted = 0
+        ) and sm.is_deleted = 0 and sm.status=1
+    </select>
+
+    <!-- List<RouterVo> getUserMenuList(@Param("id") String userId); -->
+    <select id="getUserButtonList" resultType="java.lang.String">
+        select sm.perms
+        from sys_menu sm
+        where sm.id in (select srm.menu_id
+                        from sys_role_menu srm
+                        where srm.role_id in
+                              (select sr.role_id
+                               from sys_user_role sr
+                               where sr.user_id = #{id}
+                                 and sr.is_deleted = 0)
+                          and srm.is_deleted = 0)
+          and sm.is_deleted = 0
+          and sm.status = 1
+          and sm.type = 2
     </select>
 </mapper>

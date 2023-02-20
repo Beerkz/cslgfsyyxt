@@ -19,7 +19,7 @@ public interface SysMenuService {
 
     void doAssign(AssignMenuVo assignMenuVo);
 
-    List<RouterVo> getUserMenuList(String id);
+    List<RouterVo> getUserMenuList(Long id);
 
-    List<String> getUserButtonList(String id);
+    List<String> getUserButtonList(Long id);
 }

@@ -1,4 +1,4 @@
-package com.cslg.system.config;
+package com.cslg.secruity.config;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.cslg.system.entity.SysMenu;
@@ -22,10 +22,8 @@ public class StpInterfaceImpl implements StpInterface {
 
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        List<SysMenu> menuByRoleId = sysMenuRepository.findMenuByRoleId((Long) loginId);
-        List<String> collect = menuByRoleId.stream().map(m -> {
-            return String.valueOf(m.getName());
-        }).collect(Collectors.toList());
+        List<SysMenu> menuByRoleId = sysMenuRepository.findMenuByRoleId(Long.valueOf((String) loginId));
+        List<String> collect = menuByRoleId.stream().map(m -> String.valueOf(m.getPerms())).collect(Collectors.toList());
         return collect;
     }
 

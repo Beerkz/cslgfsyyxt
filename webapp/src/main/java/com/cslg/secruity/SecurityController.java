@@ -4,11 +4,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.cslg.system.vo.LoginVo;
 import com.cslg.vo.RestBody;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,24 +23,39 @@ public class SecurityController {
      * 用户登录
      *
      * @param loginVo 用户登录条件
-     * @return
+     * @return token
      */
     @PostMapping("/login")
-    public RestBody<?> login(LoginVo loginVo) {
+    @ApiOperation("用户登录")
+    public RestBody<?> login(@RequestBody LoginVo loginVo) {
         String token = securityService.securityService(loginVo);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         return RestBody.okData(map);
     }
 
+    /**
+     * 获取登录用户基本信息
+     *
+     * @return 用户权限
+     */
     @GetMapping("/info")
+    @ApiOperation("用户基本信息")
+    public RestBody<?> getInfo() {
+        Long loginId = StpUtil.getLoginIdAsLong();
+        Map<String, Object> userInfo = securityService.getUserInfo(loginId);
+        //Map<String, Object> map = new HashMap<>();
+        //map.put("roles", "[admin]");
+        //map.put("introduction", "i am a super administrator");
+        //map.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+        //map.put("name", "Super Admin zkkk");
+        return RestBody.okData(userInfo);
+    }
+
+    @PostMapping("/logout")
+    @ApiOperation("用户登出")
     public RestBody<?> logout() {
-        Long loginId = (Long) StpUtil.getLoginId();
-        Map<String, Object> map = new HashMap<>();
-        map.put("roles", "[admin]");
-        map.put("introduction", "i am a super administrator");
-        map.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-        map.put("name", "Super Admin zkkk");
-        return RestBody.okData(map);
+        StpUtil.logout();
+        return RestBody.ok();
     }
 }

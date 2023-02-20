@@ -1,5 +1,7 @@
 package com.cslg.system;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.cslg.system.entity.SysUser;
 import com.cslg.system.param.PageUserCondition;
 import com.cslg.vo.JsonPagedVO;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("system/user")
 @AllArgsConstructor
+@SaCheckLogin
 public class UserController {
 
     private SysUserService sysUserService;
@@ -28,6 +31,7 @@ public class UserController {
 
     @ApiOperation("用户添加")
     @PostMapping("add")
+    @SaCheckPermission("bnt.sysUser.add")
     public RestBody<?> addUser(@RequestBody SysUser sysUser) {
         sysUserService.insertOrUpdateUser(sysUser);
         return RestBody.ok();
@@ -35,6 +39,7 @@ public class UserController {
 
     @ApiOperation("用户修改")
     @PostMapping("update")
+    @SaCheckPermission("bnt.sysUser.update")
     public RestBody<?> updateUser(@RequestBody SysUser sysUser) {
         sysUserService.insertOrUpdateUser(sysUser);
         return RestBody.ok();
@@ -42,6 +47,7 @@ public class UserController {
 
     @ApiOperation("根据id查看用户信息")
     @GetMapping("view/{id}")
+    @SaCheckPermission("bnt.sysUser.list")
     public RestBody<?> viewUserById(@PathVariable Long id) {
         SysUser user = sysUserService.getUserById(id);
         return RestBody.okData(user);
@@ -56,6 +62,7 @@ public class UserController {
 
     @ApiOperation("删除用户")
     @GetMapping("delete/{id}")
+    @SaCheckPermission("bnt.sysUser.remove")
     public RestBody<?> deleteUser(@PathVariable Long id) {
         sysUserService.deleteUser(id);
         return RestBody.ok();

@@ -5,6 +5,7 @@ import com.cslg.system.SysMenuService;
 import com.cslg.system.entity.SysMenu;
 import com.cslg.system.repository.SysMenuRepository;
 import com.cslg.system.repository.SysRoleMenuRepository;
+import com.cslg.system.utils.RouterUtils;
 import com.cslg.system.vo.AssignMenuVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,8 @@ public class SysMenuServiceImpl implements SysMenuService {
     private final SysMenuRepository sysMenuRepository;
 
     private final SysRoleMenuRepository sysRoleMenuRepository;
+
+    private final RouterUtils routerUtils;
 
     @Override
     public List<SysMenu> findAllMenu() {
@@ -131,14 +133,24 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     /**
-     * 获取用户菜单信息
+     * 获取用户菜单信息权限
      *
      * @param id
      * @return
      */
     @Override
-    public List<RouterVo> getUserMenuList(String id) {
-        return null;
+    public List<RouterVo> getUserMenuList(Long id) {
+        List<SysMenu> userMenuList = sysMenuRepository.getUserMenuList(Long.valueOf(id));
+        List<SysMenu> MenuList = new ArrayList<>();
+        userMenuList.stream().forEach(u -> {
+            if (u.getParentId() == 0) {
+                findNodes(u, userMenuList);
+                MenuList.add(u);
+            }
+        });
+        List<RouterVo> routerVos = routerUtils.buildRouters(MenuList);
+
+        return routerVos;
     }
 
     /**
@@ -148,12 +160,14 @@ public class SysMenuServiceImpl implements SysMenuService {
      * @return
      */
     @Override
-    public List<String> getUserButtonList(String id) {
-        return null;
+    public List<String> getUserButtonList(Long id) {
+        List<String> userButtonList = sysMenuRepository.getUserButtonList(Long.valueOf(id));
+
+        return userButtonList;
     }
 
     /**
-     * 数据树形化
+     * 菜单数据树形化
      */
     public SysMenu findNodes(SysMenu sysMenu, List<SysMenu> sysMenus) {
         sysMenus.stream().forEach(s -> {

@@ -1,5 +1,7 @@
 package com.cslg.system;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.cslg.system.entity.SysRole;
 import com.cslg.vo.JsonPagedVO;
 import com.cslg.vo.RestBody;
@@ -17,11 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("system/role")
+@SaCheckLogin
 public class RoleController {
     private final SysRoleService sysRoleService;
 
     /**
-     * 查询所有接口
+     * 查询所有角色接口
      */
     @ApiOperation("角色查询所有")
     @GetMapping("findAllRole")
@@ -34,6 +37,7 @@ public class RoleController {
      */
     @ApiOperation("根据id查询角色")
     @PostMapping("select/{id}")
+    @SaCheckPermission("bnt.sysRole.list")
     public RestBody<?> selectRoleById(@PathVariable Long id) {
         return RestBody.okData(sysRoleService.getById(id));
     }
@@ -46,6 +50,7 @@ public class RoleController {
      */
     @ApiOperation("角色逻辑删除接口")
     @GetMapping("delete/{id}")
+    @SaCheckPermission("bnt.sysRole.remove")
     public RestBody<?> deleteRoleById(@PathVariable Long id) {
         boolean b = sysRoleService.removeById(id);
         if (b) {
@@ -80,6 +85,7 @@ public class RoleController {
      */
     @ApiOperation("角色添加/修改")
     @PostMapping("insertOrUpdate")
+    @SaCheckPermission("bnt.sysRole.update")
     public RestBody<?> insertOrUpdateRole(@RequestBody SysRole sysRole) {
         //存在id就是修改，不存在就是增加
         log.info("增加或者修改属性:{}", sysRole.toString());
@@ -99,6 +105,7 @@ public class RoleController {
      */
     @ApiOperation("角色批量删除")
     @DeleteMapping("batchremove")
+    @SaCheckPermission("bnt.sysRole.remove")
     public RestBody<?> removeRoleByIds(@RequestBody List<Long> ids) {
         log.info("批量删除角色Id:{}", ids);
         sysRoleService.removeByIds(ids);

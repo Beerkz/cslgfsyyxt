@@ -89,6 +89,11 @@ public interface SysMenuRepository {
     /**
      * 根据用户id查询所有菜单
      */
-    List<RouterVo> getUserMenuList(@Param("id") String userId);
+    List<SysMenu> getUserMenuList(@Param("id") Long userId);
+
+    /**
+     * 根据用户id查询所有按钮权限
+     */
+    List<String> getUserButtonList(@Param("id") Long id);
 
 }

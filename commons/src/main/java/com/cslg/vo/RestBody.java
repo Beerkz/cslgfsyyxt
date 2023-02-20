@@ -65,6 +65,14 @@ public class RestBody<T> {
         return restBody;
     }
 
+    public static RestBody<Void> failure(int code, String msg, String identifier) {
+        final RestBody<Void> restBody = new RestBody<>();
+        restBody.setCode(code);
+        restBody.setMsg(msg);
+        restBody.setIdentifier(identifier);
+        return restBody;
+    }
+
     public static RestBody<Void> failure(int code, String msg) {
         final RestBody<Void> restBody = new RestBody<>();
         restBody.setCode(code);

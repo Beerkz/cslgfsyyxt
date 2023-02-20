@@ -251,6 +251,7 @@
         <include refid="pagedUser"></include>
         from sys_user su
         <where>
+            su.is_deleted = 0
             <if test="username!=null and username !='' ">
                 and su.username = #{username}
             </if>
