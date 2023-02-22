@@ -92,8 +92,35 @@
     </select>
 
     <!-- Long countPageOperLog(PageOperCondition pageOperCondition); -->
-    <select id="countPageOperLog">
+    <select id="countPageOperLog" resultType="java.lang.Long">
         select count(1)
-        from sys_oper_log
+        from sys_oper_log sol
+        <where>
+            <if test="moduleName!='' and moduleName!=null">
+                title =#{moduleName}
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{createTime}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                date_fomat(sll.create_time,'%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+    <!-- List<SysOperLog> pageOperLog(PageOperCondition pageOperCondition); -->
+    <select id="pageOperLog" resultType="com.cslg.secruity.entity.SysOperLog">
+        select *
+        from sys_oper_log sol
+        <where>
+            <if test="moduleName!='' and moduleName!=null">
+                title =#{moduleName}
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{createTime}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                date_fomat(sll.create_time,'%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
     </select>
 </mapper>

@@ -53,6 +53,13 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public JsonPagedVO<SysOperLog> pageOperLog(PageOperCondition pageOperCondition) {
-        return null;
+        final List<SysOperLog> sysOperLogs;
+        Long count = logRepository.countPageOperLog(pageOperCondition);
+        if (count > 0) {
+            sysOperLogs = logRepository.pageOperLog(pageOperCondition);
+        } else {
+            sysOperLogs = Collections.emptyList();
+        }
+        return new JsonPagedVO<>(sysOperLogs, count);
     }
 }

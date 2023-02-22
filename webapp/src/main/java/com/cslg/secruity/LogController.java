@@ -1,6 +1,7 @@
 package com.cslg.secruity;
 
 import com.cslg.secruity.entity.SysLoginLog;
+import com.cslg.secruity.entity.SysOperLog;
 import com.cslg.secruity.param.PageLogCondition;
 import com.cslg.secruity.param.PageOperCondition;
 import com.cslg.vo.JsonPagedVO;
@@ -35,6 +36,7 @@ public class LogController {
 
     @PostMapping("page/operlog")
     public RestBody<?> pageOperLog(PageOperCondition pageOperCondition) {
-
+        JsonPagedVO<SysOperLog> sysOperLogJsonPagedVO = logService.pageOperLog(pageOperCondition);
+        return RestBody.okData(sysOperLogJsonPagedVO);
     }
 }
