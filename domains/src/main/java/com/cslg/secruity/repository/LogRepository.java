@@ -5,6 +5,7 @@ import com.cslg.secruity.entity.SysOperLog;
 import com.cslg.secruity.param.PageLogCondition;
 import com.cslg.secruity.param.PageOperCondition;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -57,5 +58,21 @@ public interface LogRepository {
      * @return
      */
     List<SysOperLog> pageOperLog(PageOperCondition pageOperCondition);
+
+    /**
+     * 根据id删除登录日志
+     *
+     * @param id 登录日志id
+     * @return
+     */
+    Integer deleteLoginLog(@Param("id") String id);
+
+    /**
+     * 根据id删除操作日志
+     *
+     * @param id 操作日志id
+     * @return
+     */
+    Integer deleteOperLog(@Param("id") String id);
 
 }

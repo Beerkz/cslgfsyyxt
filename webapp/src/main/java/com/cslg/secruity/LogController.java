@@ -8,9 +8,7 @@ import com.cslg.vo.JsonPagedVO;
 import com.cslg.vo.RestBody;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,13 +27,45 @@ public class LogController {
      */
     @PostMapping("page/loginlog")
     @ApiOperation("分页查询登录日志")
-    public RestBody<?> pageLoginLog(PageLogCondition pageLogCondition) {
+    public RestBody<?> pageLoginLog(@RequestBody PageLogCondition pageLogCondition) {
         JsonPagedVO<SysLoginLog> sysLoginLogJsonPagedVO = logService.pageLoginLog(pageLogCondition);
         return RestBody.okData(sysLoginLogJsonPagedVO);
     }
 
+    /**
+     * 删除登录日志
+     *
+     * @param id 登录日志id
+     * @return
+     */
+    @GetMapping("page/deleteLoginLog/{id}")
+    @ApiOperation("删除登录日志")
+    public RestBody<?> deleteLoginLog(@PathVariable String id) {
+        logService.deleteLoginLog(id);
+        return RestBody.ok();
+    }
+
+    /**
+     * 删除操作日志
+     *
+     * @param id 操作日志id
+     * @return
+     */
+    @GetMapping("page/deleteOperLog/{id}")
+    @ApiOperation("删除操作日志")
+    public RestBody<?> deleteOperLog(@PathVariable String id) {
+        logService.deleteOperLog(id);
+        return RestBody.ok();
+    }
+
+    /**
+     * 分页查询模块日志
+     *
+     * @param pageOperCondition
+     * @return
+     */
     @PostMapping("page/operlog")
-    public RestBody<?> pageOperLog(PageOperCondition pageOperCondition) {
+    public RestBody<?> pageOperLog(@RequestBody PageOperCondition pageOperCondition) {
         JsonPagedVO<SysOperLog> sysOperLogJsonPagedVO = logService.pageOperLog(pageOperCondition);
         return RestBody.okData(sysOperLogJsonPagedVO);
     }

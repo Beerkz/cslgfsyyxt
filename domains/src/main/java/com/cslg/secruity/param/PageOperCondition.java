@@ -8,11 +8,11 @@ public class PageOperCondition extends AbstractPagedCondition {
     /**
      * 日志开始时间
      */
-    private String startTime;
+    private String beginDate;
     /**
      * 日志结束时间
      */
-    private String endTime;
+    private String endDate;
     /**
      * 操作模块
      */

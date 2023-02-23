@@ -62,4 +62,24 @@ public class LogServiceImpl implements LogService {
         }
         return new JsonPagedVO<>(sysOperLogs, count);
     }
+
+    /**
+     * 删除登录日志
+     *
+     * @param id
+     */
+    @Override
+    public void deleteLoginLog(String id) {
+        logRepository.deleteLoginLog(id);
+    }
+
+    /**
+     * 删除操作日志
+     *
+     * @param id
+     */
+    @Override
+    public void deleteOperLog(String id) {
+        logRepository.deleteOperLog(id);
+    }
 }

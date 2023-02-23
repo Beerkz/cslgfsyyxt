@@ -29,4 +29,9 @@ public interface LogService {
      * @return
      */
     JsonPagedVO<SysOperLog> pageOperLog(PageOperCondition pageOperCondition);
+
+
+    void deleteLoginLog(String id);
+
+    void deleteOperLog(String id);
 }
