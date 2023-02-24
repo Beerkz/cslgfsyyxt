@@ -17,4 +17,8 @@ public class PageOperCondition extends AbstractPagedCondition {
      * 操作模块
      */
     private String moduleName;
+    /**
+     * 用户名称
+     */
+    private String username;
 }

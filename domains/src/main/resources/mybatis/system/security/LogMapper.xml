@@ -102,6 +102,9 @@
             <if test="moduleName!='' and moduleName!=null">
                 and title =#{moduleName}
             </if>
+            <if test="moduleName!='' and moduleName!=null">
+                and oper_name =#{moduleName}
+            </if>
             <if test="beginDate!=null and beginDate!=''">
                 and date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{beginDate}
             </if>
@@ -125,7 +128,10 @@
         <where>
             sol.is_deleted=0
             <if test="moduleName!='' and moduleName!=null">
-                and title =#{moduleName}
+                and oper_name =#{moduleName}
+            </if>
+            <if test="username!='' and username!=null">
+                and title =#{username}
             </if>
             <if test="beginDate!=null and beginDate!=''">
                 and date_format(sll.create_time,'%Y-%m-%d') <![CDATA[>=]]> #{beginDate}
