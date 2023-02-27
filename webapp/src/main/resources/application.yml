@@ -3,3 +3,29 @@ spring:
     name: cslgfsyyxt
   profiles:
     active: dev
+attachment:
+  base-dir: D:imgs/bysj
+  temp-dir: D:imgs/bysj/tmp
+  mapping: /attachment
+  access:
+    jpg: 10MB
+    png: 10MB
+    gif: 10MB
+    bmp: 10MB
+    pdf: 10MB
+    xls: 10MB
+    doc: 10MB
+    ppt: 10MB
+    wps: 10MB
+    xlsx: 10MB
+    docx: 10MB
+    pptx: 10MB
+    rmvb: 100MB
+    flv: 100MB
+    mp4: 100MB
+    mp3: 10MB
+    wmv: 10MB
+    wav: 10MB
+
+security:
+  default-password: Aa123456#
