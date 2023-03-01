@@ -4,8 +4,8 @@ spring:
   profiles:
     active: dev
 attachment:
-  base-dir: D:imgs/bysj
-  temp-dir: D:imgs/bysj/tmp
+  base-dir: D:/imgs/bysj
+  temp-dir: D:/imgs/bysj/tmp
   mapping: /attachment
   access:
     jpg: 10MB

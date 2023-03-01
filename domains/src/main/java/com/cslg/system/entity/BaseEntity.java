@@ -28,6 +28,9 @@ public class BaseEntity implements Serializable {
     @TableField("is_deleted")
     private Integer isDeleted;
 
+    private Integer createId;
+
+    private Integer updateId;
     @TableField(exist = false)
     private Map<String, Object> param = new HashMap<>();
 }

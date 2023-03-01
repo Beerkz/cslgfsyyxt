@@ -6,6 +6,7 @@ import com.cslg.attachmet.entity.AttachmentEntity;
 import com.cslg.vo.RestBody;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,23 +23,23 @@ import java.util.stream.Collectors;
 @RequestMapping("secured/attachment/")
 @Api(tags = "附件上传")
 @RestController
-@RequiredArgsConstructor
-@SaCheckLogin
+@AllArgsConstructor
+//@SaCheckLogin
 public class AttachmentController {
 
     private AttachmentService attachmentService;
 
     @PostMapping("upload")
-    @SaCheckLogin
     @ApiOperation("附件上传")
     public RestBody<List<AttachmentEntity>> uploads(@RequestParam MultipartFile[] files) {
-        Arrays.stream(files).map(file -> {
+        List<AttachmentEntity> collect = Arrays.stream(files).map(file -> {
             final String fileOriginalName = file.getOriginalFilename();
             try (final InputStream inputStream = file.getInputStream()) {
-
+                return attachmentService.uploadAttachments(inputStream, fileOriginalName);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }).collect(Collectors.toList());
+        return RestBody.okData(collect);
     }
 }

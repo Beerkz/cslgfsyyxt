@@ -1,9 +1,7 @@
 package com.cslg.attachmet.entity;
 
 import com.cslg.system.entity.BaseEntity;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.ibatis.annotations.Select;
 
 /**
@@ -12,6 +10,8 @@ import org.apache.ibatis.annotations.Select;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class AttachmentEntity extends BaseEntity {
     /**
      * 原文件名
