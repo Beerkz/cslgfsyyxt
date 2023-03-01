@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityController {
 
-    private final SecurityService securityService;
+    private SecurityService securityService;
 
     /**
      * 用户登录
