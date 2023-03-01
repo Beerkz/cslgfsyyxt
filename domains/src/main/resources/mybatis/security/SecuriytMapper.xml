@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.secruity.repository.SecurityRepository">
+    <sql id="sysUser">
+        id,
+        stu_no,
+        username,
+        name,
+        phone,
+        head_url,
+        dept_id,
+        post_id,
+        password,
+        status,
+        create_time,
+        update_time,
+        is_deleted,
+        description
+    </sql>
+    <!-- SysUser getUserById(Long id); -->
+    <select id="getUserById" resultType="com.cslg.system.entity.SysUser">
+        select
+        <include refid="sysUser"></include>
+        from sys_user
+        where id = #{id}
+    </select>
+</mapper>
