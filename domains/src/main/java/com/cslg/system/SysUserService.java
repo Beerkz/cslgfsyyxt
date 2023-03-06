@@ -22,4 +22,12 @@ public interface SysUserService extends IService<SysUser> {
 
     SysUser getUserByNameOrStuNo(LoginVo LoginVo);
 
+    /**
+     * 根据角色编码获取用户信息
+     *
+     * @param roleCode 角色编码
+     * @return 返回用户信息
+     */
+    List<SysUser> getUserByRoleCode(String roleCode);
+
 }

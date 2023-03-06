@@ -106,4 +106,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserRepository, SysUser> 
         SysUser userByNameOrStuNo = sysUserRepository.getUserByNameOrStuNo(loginVo);
         return userByNameOrStuNo;
     }
+
+    @Override
+    public List<SysUser> getUserByRoleCode(String roleCode) {
+        final List<SysUser> userByRoleCode = sysUserRepository.getUserByRoleCode(roleCode);
+        return userByRoleCode;
+    }
 }
