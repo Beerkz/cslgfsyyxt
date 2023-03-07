@@ -1,21 +1,28 @@
 package com.cslg.lab.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.IdUtil;
 import com.cslg.lab.FlowableService;
+import com.cslg.system.SysRoleService;
 import com.cslg.system.SysUserService;
 import com.cslg.system.entity.BaseEntity;
+import com.cslg.system.entity.SysRole;
 import com.cslg.system.entity.SysUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.IdentityService;
 import org.flowable.engine.RuntimeService;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
+import org.flowable.task.api.Task;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.cslg.system.enums.RoleCode.INSTRUCTOR;
@@ -32,19 +39,29 @@ public class FlowableServiceImpl implements FlowableService {
 
     private final SysUserService sysUserService;
 
+    private final SysRoleService sysRoleService;
+
+    private final TaskService taskService;
+
 
     //启动一个流程
     @Override
     public Boolean startWorkFlow() {
         //跟新流程表中的老师信息
-        assignGroupTeacher();
+        //assignGroupTeacher();
         //更新流程表中的
-        assignGroupManager();
+        //assignGroupManager();
         //第一个参数是流程的启动id（key），第二个参数叫做流程的key需要唯一，第三个参数放流程的需要用的的变量map集合
+        String key = "RES" + IdUtil.simpleUUID();
         ProcessInstance reserveLabTest1 = runtimeService
-                .startProcessInstanceByKey("reserveLabTest1");
-
-        return null;
+                .startProcessInstanceByKey("reserveLabTest1",
+                        key,
+                        Map.of("mine", StpUtil.getLoginId(),
+                                INSTRUCTOR.getGroupId(), identityService.createGroupQuery().groupId(INSTRUCTOR.getId()).singleResult(),
+                                MANAGER.getGroupId(), identityService.createGroupQuery().groupId(MANAGER.getId()).singleResult()));
+        Task task = taskService.createTaskQuery().processInstanceId(reserveLabTest1.getProcessInstanceId()).singleResult();
+        taskService.complete(task.getId());
+        return true;
     }
 
     /**

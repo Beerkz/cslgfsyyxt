@@ -7,8 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum RoleCode {
-    INSTRUCTOR("instructor", "TEACHER"),
-    MANAGER("manager", "MANAGER");
+    INSTRUCTOR("1", "instructor", "TEACHER"),
+    MANAGER("2", "manager", "MANAGER");
+    private String id;
     private String groupId;
     private String roleCode;
 

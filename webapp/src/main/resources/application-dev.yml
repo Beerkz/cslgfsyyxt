@@ -40,5 +40,5 @@ flowable:
   # 关闭定时任务JOB
   async-executor-activate: false
   # 将databaseSchemaUpdate设置为true。当flowable发现数据库不一致的时候，会自动将数据库表结构更新到最新版本。
-  database-schema-update: true
+  database-schema-update: false
 
