@@ -7,7 +7,7 @@ import com.cslg.system.param.PageUserCondition;
 import com.cslg.system.vo.LoginVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,5 +36,7 @@ public interface SysUserRepository extends BaseMapper<SysUser> {
     Long deleteUser(@Param("id") Long id);
 
     SysUser getUserByNameOrStuNo(LoginVo loginVo);
+
+    List<SysUser> getUserByRoleCode(@Param("code") String code);
 
 }

@@ -261,4 +261,15 @@
         </where>
     </select>
 
+
+    <!-- List<SysUser> getUserByRoleCode(@Param("code") String code); -->
+    <select id="getUserByRoleCode" resultType="com.cslg.system.entity.SysUser">
+        select
+        <include refid="pagedUser"></include>
+        from sys_user su
+        right join sys_user_role sur on sur.user_id = su.id
+        right join sys_role sr on sr.id = sur.role_id and sr.role_code = #{code}
+        where su.is_deleted=0
+    </select>
+
 </mapper>
