@@ -5,6 +5,7 @@ import com.cslg.system.vo.LoginVo;
 import com.cslg.vo.RestBody;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 @Api(tags = "用户登录接口")
 @RestController
 @RequestMapping("system/secured")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class SecurityController {
 
     private SecurityService securityService;

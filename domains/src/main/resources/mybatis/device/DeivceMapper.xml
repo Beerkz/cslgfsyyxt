@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.deivce.repository.DeviceRepository">
+    <sql id="deviceColumSql">
+        id,
+        lab_id,
+        device_name,
+        device_usage,
+        deivce_param,
+        device_principle,
+        device_model,
+        project,
+        create_time,
+        update_time,
+        create_id,
+        update_id,
+        device_urlw
+    </sql>
+    <!--List<DeviceEntity> findDeviceByLabId(@Param("id") Long id);-->
+    <select id="findDeviceByLabId" resultType="com.cslg.deivce.entity.DeviceEntity">
+        select <include refid="deviceColumSql"></include>
+            from t_lab_device tld
+        left join t_device td on tld.device_id = td.id
+        where tld.lab_id = #{id}
+    </select>
+
+    <update id="deleteLabAndDeviceRelationship">
+        update t_lab_device set is_deleted = 1
+        where lab_id =#{id}
+    </update>
+
+    <insert id="insertLabAndDeviceRelationship">
+        insert into t_lab_device(
+            lab_id,
+            device_id
+        ) values(
+            #{labId},
+            #{deviceId}
+            )
+    </insert>
+</mapper>

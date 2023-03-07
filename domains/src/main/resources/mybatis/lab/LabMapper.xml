@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.lab.repository.LabRepository">
+
+
+    <sql id="labColum">
+        id,
+        lab_name,
+        latitude,
+        longitude,
+        Introduction,
+        warning,
+        capacity,
+        create_time,
+        create_id,
+        lab_manager_id,
+        lab_url,
+        update_time,
+        update_id
+    </sql>
+
+    <resultMap id="viewLabMap" type="com.cslg.lab.vo.PageLabVo">
+        <id property="id" column="id"></id>
+        <collection property="deviceEntities"
+                    column="id"
+                    ofType="com.cslg.deivce.entity.DeviceEntity"
+                    select="com.cslg.deivce.repository.DeviceRepository.findDeviceByLabId"
+        >
+
+        </collection>
+    </resultMap>
+
+    <!--Integer countPage(PageLabCondition pageLabCondition);-->
+    <select id="countPage" resultType="java.lang.Long">
+        select count(1)
+        from t_lab tl
+        <where>
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
+            </if>
+        </where>
+    </select>
+    <!--List<PageLabVo> page(PageLabCondition pageLabCondition);-->
+    <select id="page" resultType="com.cslg.lab.vo.PageLabVo">
+        SELECT
+            su.name as labManagerName,
+            su.phone as managerPhone,
+            tl.id,
+            tl.lab_name,
+            tl.latitude,
+            tl.longitude,
+            tl.Introduction,
+            tl.warning,
+            tl.capacity,
+            tl.create_time,
+            tl.create_id,
+            tl.lab_manager_id,
+            tl.lab_url,
+            tl.update_time,
+            tl.update_id,
+            tl.status
+            from t_lab tl
+            left join sys_user su on su.id = tl.lab_manager_id
+        <where>
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
+            </if>
+        </where>
+        <if test="start !=null and limit >0">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <!--Integer insertLab(LabRepository labRepository);-->
+    <insert id="insertLab">
+        insert into t_lab(
+            lab_name,
+            latitude,
+            longitude,
+            Introduction,
+            warning,
+            capacity,
+            lab_manager_id,
+            lab_url,
+            update_id,
+            create_id
+        ) values(
+            #{labName},
+            #{latitude},
+            #{longitude},
+            #{Introduction},
+            #{warning},
+            #{capacity},
+            #{labManagerId},
+            #{labUrl},
+            #{createId},
+            #{createId}
+        )
+    </insert>
+
+    <update id="updateLab">
+        update t_lab
+        <set>
+            <if test="labName !=null and labName!=''">
+                lab_name=#{labName},
+            </if>
+            <if test="latitude!=null latitude lab!=''">
+                latitude=#{latitude},
+            </if>
+            <if test="longitude!=null longitude lab!=''">
+                longitude=#{longitude},
+            </if>
+            <if test="Introduction!=null and Introduction!=''">
+                Introduction=#{Introduction}
+            </if>
+            <if test="warning!=null and warning!=''">
+                warning=#{warning}
+            </if>
+            <if test="capacity!=null and capacity!=''">
+                capacity=#{capacity}
+            </if>
+            <if test="labManagerId != null and labManagerId != ''">
+                labManagerId=#{labManagerId}
+            </if>
+            <if test="labUrl!=null and labUrl!=''">
+                labUrl=#{labUrl}
+            </if>
+            update_id=#{udpateId},
+            update_time=timestamp()
+        </set>
+        where id =#{id}
+    </update>
+
+    <select id="viewLab" resultMap="viewLabMap">
+        select
+        <include refid="labColum"></include>
+        from t_lab
+        where id=#{id}
+
+    </select>
+</mapper>
