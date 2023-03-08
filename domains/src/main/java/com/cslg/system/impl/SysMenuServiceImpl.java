@@ -52,7 +52,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         if (sysMenu.getId() != null) {
             sysMenuRepository.updateMenu(sysMenu);
             if (sysMenu.getChildren() != null && !sysMenu.getChildren().isEmpty()) {
-                sysMenuRepository.deleteMenuBtn(sysMenu.getParentId());
+                sysMenuRepository.deleteMenuBtn(sysMenu.getId());
                 sysMenu.getChildren().stream().forEach(sysMenuRepository::insertMenu);
             }
         } else {
