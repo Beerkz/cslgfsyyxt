@@ -29,9 +29,9 @@ public class AttachmentController {
 
     private AttachmentService attachmentService;
 
-    @PostMapping("upload")
+    @PostMapping("uploads")
     @ApiOperation("附件上传")
-    public RestBody<List<AttachmentEntity>> uploads(@RequestParam MultipartFile[] files) {
+    public RestBody<List<AttachmentEntity>> uploads(@RequestParam("files") MultipartFile[] files) {
         List<AttachmentEntity> collect = Arrays.stream(files).map(file -> {
             final String fileOriginalName = file.getOriginalFilename();
             try (final InputStream inputStream = file.getInputStream()) {
@@ -42,4 +42,5 @@ public class AttachmentController {
         }).collect(Collectors.toList());
         return RestBody.okData(collect);
     }
+
 }
