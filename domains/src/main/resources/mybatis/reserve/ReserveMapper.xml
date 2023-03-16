@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.reserve.repository.ReserveRepository">
+
+    <!-- List<ReserveLabVo> pageReserveLab(PageReserveCondition pageReserveCondition); -->
+    <select id="pageReserveLab" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select
+        tl.lab_name,
+        tl.lab_url,
+        tl.lab_name,
+        tl.longitude,
+        tl.latitude,
+        tst.begin_time,
+        tst.end_time,
+        concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime
+        from t_lab tl
+        inner join t_lab_time_membership tltm on tltm.lab_id = tl.id
+        left join t_splice_time tst on tst.id = tltm.time_id
+        where tl.status =0 and tl.is_deleted =0
+        order by tl.id,spliceTime
+        <if test="start !=null and limit >0">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <!-- void insertReserve(StartReserveCondition startReserveCondition); -->
+    <insert id="insertReserve">
+        insert into t_lab_reserve(lab_id,
+                                  user_id,
+                                  reserve_date,
+                                  create_time,
+                                  update_time,
+                                  status,
+                                  splice_time_id,
+                                  reason)
+        values (#{labId},
+                #{userId},
+                #{reserveDate},
+                current_timestamp(),
+                current_timestamp(),
+                0,
+                #{spliceTimeId},
+                #{reason})
+    </insert>
+</mapper>

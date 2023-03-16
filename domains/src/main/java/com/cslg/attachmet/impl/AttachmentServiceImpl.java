@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.*;
@@ -28,7 +29,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final String FILE_DATE_PATTERN = "yyyy-MM-dd";
 
     @Override
-    public AttachmentEntity uploadAttachments(InputStream inputStream, String fileOriginalName) {
+    public AttachmentEntity uploadAttachments(InputStream inputStream, String fileOriginalName, MultipartFile upload) {
         log.info("上传文件保存的目录:{}", fileBaseDir);
         log.info("上传文件保存的文件名:{}", fileOriginalName);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FILE_DATE_PATTERN);
@@ -50,23 +51,23 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
             //Path file = Files.createFile(resolve);
             //log.info("文件路径:{}",file);
-            byte[] bytes = new byte[1024];
+            //upload.transferTo(file);
+            //byte[] bytes = new byte[1024];
             //int bytesWritten = 0;
-            int byteCount = 0;
+            //int byteCount = 0;
             //OutputStream outputStream = new FileOutputStream((String.valueOf(file)));
-            while ((byteCount = inputStream.read(bytes)) != -1) {
-                //    //Files.write(file, bytes, StandardOpenOption.APPEND);
-                //    outputStream.write(bytes,bytesWritten,byteCount);
-                //    bytesWritten += byteCount;
-            }
-
-            Files.copy(inputStream, resolve, StandardCopyOption.REPLACE_EXISTING);
+            //while ((byteCount = inputStream.read(bytes)) != -1) {
+            //    //Files.write(file, bytes, StandardOpenOption.APPEND);
+            //    outputStream.write(bytes,bytesWritten,byteCount);
+            //    bytesWritten += byteCount;
+            //}
+            upload.transferTo(resolve);
+            //Files.copy(inputStream, resolve, StandardCopyOption.REPLACE_EXISTING);
             //文件大小
             final long size = Files.size(resolve);
             //hutool 工具获取获取文件类型
             final String type = FileTypeUtil.getType(inputStream);
-            return new AttachmentEntity(fileOriginalName, type, size, fileDigest, mapping + PATH_SPLIT + resolve.getFileName().toString());
-            //return null;
+            return new AttachmentEntity(fileOriginalName, type, size, fileDigest, mapping + PATH_SPLIT + day + PATH_SPLIT + resolve.getFileName().toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

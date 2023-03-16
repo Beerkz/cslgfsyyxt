@@ -35,7 +35,7 @@ public class AttachmentController {
         List<AttachmentEntity> collect = Arrays.stream(files).map(file -> {
             final String fileOriginalName = file.getOriginalFilename();
             try (final InputStream inputStream = file.getInputStream()) {
-                return attachmentService.uploadAttachments(inputStream, fileOriginalName);
+                return attachmentService.uploadAttachments(inputStream, fileOriginalName, file);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }

@@ -6,7 +6,7 @@ spring:
 attachment:
   base-dir: D:/imgs/bysj
   temp-dir: D:/imgs/bysj/tmp
-  mapping: /attachment
+  mapping: http://localhost:81/attachment
   access:
     jpg: 10MB
     png: 10MB

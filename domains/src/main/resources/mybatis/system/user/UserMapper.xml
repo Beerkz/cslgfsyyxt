@@ -264,12 +264,24 @@
 
     <!-- List<SysUser> getUserByRoleCode(@Param("code") String code); -->
     <select id="getUserByRoleCode" resultType="com.cslg.system.entity.SysUser">
-        select
-        <include refid="pagedUser"></include>
+        select su.id,
+               su.stu_no,
+               su.username,
+               su.name,
+               su.phone,
+               su.head_url,
+               su.dept_id,
+               su.post_id,
+               su.password,
+               su.status,
+               su.create_time,
+               su.update_time,
+               su.is_deleted,
+               su.description
         from sys_user su
-        right join sys_user_role sur on sur.user_id = su.id
-        right join sys_role sr on sr.id = sur.role_id and sr.role_code = #{code}
-        where su.is_deleted=0
+                 inner join sys_user_role sur on sur.user_id = su.id
+                 inner join sys_role sr on sr.id = sur.role_id and sr.role_code = #{code}
+        where su.is_deleted = 0
     </select>
 
 </mapper>

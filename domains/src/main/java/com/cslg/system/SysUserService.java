@@ -30,4 +30,5 @@ public interface SysUserService extends IService<SysUser> {
      */
     List<SysUser> getUserByRoleCode(String roleCode);
 
+
 }

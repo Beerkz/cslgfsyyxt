@@ -1,4 +1,4 @@
-package com.cslg.lab.impl;
+package com.cslg.reserve.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;

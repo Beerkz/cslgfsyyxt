@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "用户管理接口")
 @Slf4j
 @RestController
@@ -66,5 +68,12 @@ public class UserController {
     public RestBody<?> deleteUser(@PathVariable Long id) {
         sysUserService.deleteUser(id);
         return RestBody.ok();
+    }
+
+    @ApiOperation("根据用户角色来选择用户")
+    @GetMapping("getroleuser/{rolecode}")
+    public RestBody<?> getUserByRole(@PathVariable String rolecode) {
+        List<SysUser> userByRoleCode = sysUserService.getUserByRoleCode(rolecode);
+        return RestBody.okData(userByRoleCode);
     }
 }

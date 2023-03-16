@@ -36,6 +36,7 @@
         select count(1)
         from t_lab tl
         <where>
+            tl.is_deleted!=1
             <if test="labName!=null and labName!=''">
                 and tl.lab_name like concat(#{labName},'%')
             </if>
@@ -63,6 +64,7 @@
             from t_lab tl
             left join sys_user su on su.id = tl.lab_manager_id
         <where>
+            tl.is_deleted!=1
             <if test="labName!=null and labName!=''">
                 and tl.lab_name like concat(#{labName},'%')
             </if>
@@ -73,17 +75,16 @@
     </select>
 
     <!--Integer insertLab(LabRepository labRepository);-->
-    <insert id="insertLab">
-        insert into t_lab(
-            lab_name,
-            latitude,
-            longitude,
-            Introduction,
-            warning,
-            capacity,
-            lab_manager_id,
-            lab_url,
-            update_id,
+    <insert id="insertLab" useGeneratedKeys="true" keyProperty="id">
+        insert into t_lab(lab_name,
+                          latitude,
+                          longitude,
+                          Introduction,
+                          warning,
+                          capacity,
+                          lab_manager_id,
+                          lab_url,
+                          update_id,
             create_id
         ) values(
             #{labName},
@@ -105,29 +106,29 @@
             <if test="labName !=null and labName!=''">
                 lab_name=#{labName},
             </if>
-            <if test="latitude!=null latitude lab!=''">
+            <if test="latitude!=null and latitude!=''">
                 latitude=#{latitude},
             </if>
-            <if test="longitude!=null longitude lab!=''">
+            <if test="longitude!=null and longitude!=''">
                 longitude=#{longitude},
             </if>
             <if test="Introduction!=null and Introduction!=''">
-                Introduction=#{Introduction}
+                Introduction=#{Introduction},
             </if>
             <if test="warning!=null and warning!=''">
-                warning=#{warning}
+                warning=#{warning},
             </if>
             <if test="capacity!=null and capacity!=''">
-                capacity=#{capacity}
+                capacity=#{capacity},
             </if>
             <if test="labManagerId != null and labManagerId != ''">
-                labManagerId=#{labManagerId}
+                lab_manager_id=#{labManagerId},
             </if>
             <if test="labUrl!=null and labUrl!=''">
-                labUrl=#{labUrl}
+                lab_url=#{labUrl},
             </if>
-            update_id=#{udpateId},
-            update_time=timestamp()
+            update_id=#{updateId},
+            update_time=current_timestamp
         </set>
         where id =#{id}
     </update>
@@ -137,6 +138,62 @@
         <include refid="labColum"></include>
         from t_lab
         where id=#{id}
-
     </select>
+
+    <!-- LabSpliceTimeEntity getAllSpliceTime(); -->
+    <select id="getAllSpliceTime" resultType="com.cslg.lab.entity.LabSpliceTimeEntity">
+        select *
+        from t_splice_time
+        where status = 0
+          and is_deleted = 0
+    </select>
+
+    <!-- Integer deleteSpliceTimeById(@Param("id") Long id); -->
+    <update id="deleteSpliceTimeById">
+        update t_lab_time_membership
+        set is_deleted = 1
+        where lab_id = #{id}
+    </update>
+    <!-- Integer insertSpliceTime(List<LabSpliceTimeVo> labSpliceTimeVoList); -->
+    <insert id="insertSpliceTime">
+        insert into t_lab_time_membership(
+        lab_id,
+        time_id
+        )
+        values
+        <foreach collection="items" separator="," item="item">
+            (#{id},
+            #{item})
+        </foreach>
+    </insert>
+    <resultMap id="labSpliceTimeIds" type="com.cslg.lab.vo.LabVo">
+        <id column="id" property="id"></id>
+        <collection property="spliceTimeIds"
+                    column="id"
+                    ofType="java.lang.Long"
+                    select="com.cslg.lab.repository.LabRepository.getLabSpliceTimeIds"
+        ></collection>
+    </resultMap>
+    <!-- LabSpliceTimeVo getLabInfo(@Param("id") Long id); -->
+    <select id="getLabInfo" resultMap="labSpliceTimeIds">
+        select tl.*
+        from t_lab tl
+        where tl.id = #{id}
+          and is_deleted = 0
+    </select>
+
+    <!-- List<Long> getLabSpliceTimeIds(@Param("id") Long id); -->
+    <select id="getLabSpliceTimeIds" resultType="java.lang.Long">
+        select time_id
+        from t_lab_time_membership
+        where lab_id = #{id}
+          and is_deleted = 0
+    </select>
+
+    <!-- void deleteLabById(@Param("id") Long id); -->
+    <update id="deleteLabById">
+        update t_lab
+        set is_deleted = 1
+        where id = #{id}
+    </update>
 </mapper>

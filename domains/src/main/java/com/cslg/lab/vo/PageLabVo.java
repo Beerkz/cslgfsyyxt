@@ -14,6 +14,8 @@ import java.util.List;
 public class PageLabVo extends LabEntity {
     List<DeviceEntity> deviceEntities;
 
+    List<Long> spliceTimeIds;
+
     private String labManagerName;
 
     private String managerPhone;

@@ -1,14 +1,19 @@
 package com.cslg.lab.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.cslg.deivce.entity.DeviceEntity;
 import com.cslg.deivce.repository.DeviceRepository;
 import com.cslg.lab.LabService;
+import com.cslg.lab.entity.LabSpliceTimeEntity;
 import com.cslg.lab.param.PageLabCondition;
 import com.cslg.lab.repository.LabRepository;
+import com.cslg.lab.vo.LabSpliceTimeVo;
+import com.cslg.lab.vo.LabVo;
 import com.cslg.lab.vo.PageLabVo;
 import com.cslg.vo.JsonPagedVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -48,17 +53,48 @@ public class LabServiceImpl implements LabService {
         }else {
             deviceIdList = Collections.emptyList();
         }
-        if (pageLabVo.getId()!=null){
+        pageLabVo.setUpdateId(StpUtil.getLoginIdAsInt());
+        if (pageLabVo.getId() != null) {
             labRepository.updateLab(pageLabVo);
-            deviceRepository.deleteLabAndDeviceRelationship(pageLabVo.getId());
-            deviceIdList.stream().forEach(d->{
-                deviceRepository.insertLabAndDeviceRelationship(pageLabVo.getId(), d);
-            });
-        }else {
+            labRepository.deleteSpliceTimeById(pageLabVo.getId());
+            labRepository.insertSpliceTime(pageLabVo.getSpliceTimeIds(), pageLabVo.getId());
+            //deviceIdList.stream().forEach(d->{
+            //    deviceRepository.insertLabAndDeviceRelationship(pageLabVo.getId(), d);
+            //});
+        } else {
             labRepository.insertLab(pageLabVo);
-            deviceIdList.stream().forEach(d->{
-                deviceRepository.insertLabAndDeviceRelationship(pageLabVo.getId(), d);
-            });
+            labRepository.insertSpliceTime(pageLabVo.getSpliceTimeIds(), pageLabVo.getId());
+            //deviceIdList.stream().forEach(d->{
+            //    deviceRepository.insertLabAndDeviceRelationship(pageLabVo.getId(), d);
+            //});
         }
+    }
+
+    @Override
+    public List<LabSpliceTimeVo> selectSpliceTime() {
+        List<LabSpliceTimeEntity> allSpliceTime = labRepository.getAllSpliceTime();
+        List<LabSpliceTimeVo> collect = allSpliceTime.stream().map(item -> {
+            LabSpliceTimeVo labSpliceTimeVo = new LabSpliceTimeVo();
+            BeanUtils.copyProperties(item, labSpliceTimeVo);
+            labSpliceTimeVo.setSpliceTime(item.getBeginTime() + "-" + item.getEndTime());
+            return labSpliceTimeVo;
+        }).collect(Collectors.toList());
+        return collect;
+    }
+
+    @Override
+    public LabVo getLabInfo(Long id) {
+        LabVo labInfo = labRepository.getLabInfo(id);
+        return labInfo;
+    }
+
+    /**
+     * 删除实验室
+     *
+     * @param id
+     */
+    @Override
+    public void deleteInfo(Long id) {
+        labRepository.deleteLabById(id);
     }
 }
