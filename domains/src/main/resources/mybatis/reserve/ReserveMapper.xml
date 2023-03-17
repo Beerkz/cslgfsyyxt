@@ -24,7 +24,7 @@
         </if>
     </select>
 
-    <!-- void insertReserve(StartReserveCondition startReserveCondition); -->
+    <!-- void insertReserve(StartReserveParam startReserveParam); -->
     <insert id="insertReserve">
         insert into t_lab_reserve(lab_id,
                                   user_id,
@@ -43,4 +43,25 @@
                 #{spliceTimeId},
                 #{reason})
     </insert>
+
+    <!-- void updateReserve(StartReserveParam startReserveParam); -->
+    <update id="updateReserve">
+        update t_lab_reserve
+        set status = 1
+        where id = #{id}
+    </update>
+    <!-- Integer countReserveByParam(StartReserveParam startReserveParam); -->
+    <select id="countReserveByParam" resultType="java.lang.Integer">
+        select count(*)
+        from t_lab_reserve
+        where splice_time_id = #{spliceTimeId}
+          and reserve_date = #{reserveDate}
+          and is_deleted = 0
+    </select>
+
+    <!-- ReserveLabVo getReserveInfo(PageReserveCondition pageReserveCondition); -->
+    <select id="getReserveInfo" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select *
+        from t_lab_reserve
+    </select>
 </mapper>

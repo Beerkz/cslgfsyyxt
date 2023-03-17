@@ -1,6 +1,7 @@
 package com.cslg.reserve.entity;
 
 import com.cslg.system.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +24,7 @@ public class ReserveEntity extends BaseEntity {
     /**
      * 预约时间
      */
+    //@JsonFormat(pattern = "yyyy-MM-dd")
     private String reserveDate;
     /**
      * 时间段id
@@ -31,7 +33,7 @@ public class ReserveEntity extends BaseEntity {
     /**
      * 流程的key查询当前流程的
      */
-    private String pro_key;
+    private String proKey;
     /**
      * 申请理由
      */

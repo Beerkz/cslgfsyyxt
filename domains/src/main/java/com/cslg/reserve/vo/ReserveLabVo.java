@@ -15,5 +15,17 @@ public class ReserveLabVo extends LabEntity {
      * 时间段
      */
     private String spliceTime;
+    /**
+     * 申请人姓名
+     */
+    private String reserveName;
+    /**
+     * 申请人电话
+     */
+    private String reserveTel;
+    /**
+     * 申请人邮箱
+     */
+    private String email;
 
 }

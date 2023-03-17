@@ -2,11 +2,9 @@ package com.cslg.reserve.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
-import com.cslg.lab.FlowableService;
+import com.cslg.reserve.FlowableService;
 import com.cslg.system.SysRoleService;
 import com.cslg.system.SysUserService;
-import com.cslg.system.entity.BaseEntity;
-import com.cslg.system.entity.SysRole;
 import com.cslg.system.entity.SysUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +15,14 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.cslg.reserve.enums.ReserveEnums.AUDIT_MANAGER;
+import static com.cslg.reserve.enums.ReserveEnums.RESERVE;
 import static com.cslg.system.enums.RoleCode.INSTRUCTOR;
 import static com.cslg.system.enums.RoleCode.MANAGER;
 
@@ -46,22 +44,35 @@ public class FlowableServiceImpl implements FlowableService {
 
     //启动一个流程
     @Override
-    public Boolean startWorkFlow() {
+    public Boolean startWorkFlow(String key) {
         //跟新流程表中的老师信息
         //assignGroupTeacher();
         //更新流程表中的
         //assignGroupManager();
         //第一个参数是流程的启动id（key），第二个参数叫做流程的key需要唯一，第三个参数放流程的需要用的的变量map集合
-        String key = "RES" + IdUtil.simpleUUID();
         ProcessInstance reserveLabTest1 = runtimeService
                 .startProcessInstanceByKey("reserveLabTest1",
                         key,
                         Map.of("mine", StpUtil.getLoginId(),
                                 INSTRUCTOR.getGroupId(), identityService.createGroupQuery().groupId(INSTRUCTOR.getId()).singleResult(),
-                                MANAGER.getGroupId(), identityService.createGroupQuery().groupId(MANAGER.getId()).singleResult()));
+                                MANAGER.getGroupId(), identityService.createGroupQuery().groupId(MANAGER.getId()).singleResult()
+                        )
+
+                );
+        //自己查询获取任务并且完成
         Task task = taskService.createTaskQuery().processInstanceId(reserveLabTest1.getProcessInstanceId()).singleResult();
-        taskService.complete(task.getId());
+        taskService.complete(task.getId(), Map.of(
+                "step", AUDIT_MANAGER.getStep(),
+                "stepName", AUDIT_MANAGER.getStepName(),
+                "nextStop", AUDIT_MANAGER.getNexStep()));
         return true;
+    }
+
+    @Override
+    public boolean completeTask(String key) {
+        Task task = taskService.createTaskQuery().processInstanceBusinessKey(key).includeTaskLocalVariables().singleResult();
+        Map<String, Object> processVariables = task.getProcessVariables();
+        return false;
     }
 
     /**
