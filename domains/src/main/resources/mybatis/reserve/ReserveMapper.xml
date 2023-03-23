@@ -33,7 +33,8 @@
                                   update_time,
                                   status,
                                   splice_time_id,
-                                  reason)
+                                  reason,
+                                  pro_key)
         values (#{labId},
                 #{userId},
                 #{reserveDate},
@@ -41,7 +42,8 @@
                 current_timestamp(),
                 0,
                 #{spliceTimeId},
-                #{reason})
+                #{reason},
+                #{proKey})
     </insert>
 
     <!-- void updateReserve(StartReserveParam startReserveParam); -->
@@ -64,4 +66,129 @@
         select *
         from t_lab_reserve
     </select>
+
+    <!-- ReserveLabVo getReserveInfoByKey(@Param("key") String key); -->
+    <select id="getReserveInfoByKey" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select tlr.*, su.*, su.name as reserveName
+        from t_lab_reserve tlr
+                 left join sys_user su on su.id = tlr.user_id
+                 left join t_lab tl on tl.id = tlr.lab_id
+        where tlr.pro_key = #{key}
+    </select>
+
+    <!-- Integer countReserveInfo(@Param("params")PageReserveCondition pageReserveCondition,@Param("items") List<String> keys); -->
+    <select id="countReserveInfo" resultType="java.lang.Long">
+        select count(*)
+        from t_lab_reserve tlr
+        left join t_lab tl on tlr.lab_id = tl.id
+        left join sys_user su on su.id = tlr.user_id
+        left join t_splice_time tst on tst.id = tlr.splice_time_id
+        <where>
+            tlr.pro_key in
+            <foreach collection="items" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            <if test="params.labName!=null and params.labName!=''">
+                and tl.lab_name like concat(#{params})
+            </if>
+        </where>
+    </select>
+
+    <!-- List<ReserveLabVo> pageReserveInfo(List<String> keys); -->
+    <select id="pageReserveInfo" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select tl.lab_name,
+        tlr.id,
+        tlr.reserve_date as reserveDate,
+        concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime,
+        su.name as reserveName,
+        su.phone as reserveTel,
+        tlr.pro_key as proKey
+        from t_lab_reserve tlr
+        left join t_lab tl on tlr.lab_id = tl.id
+        left join sys_user su on su.id = tlr.user_id
+        left join t_splice_time tst on tst.id = tlr.splice_time_id
+        <where>
+            tlr.pro_key in
+            <foreach collection="items" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            <if test="params.labName!=null and params.labName!=''">
+                and tl.lab_name like concat(#{params})
+            </if>
+        </where>
+        <if test="params.start!=null and params.limit>0">
+            limit #{params.start},#{params.limit}
+        </if>
+    </select>
+
+    <!-- ReserveLabVo getReserveInfoById(@Param("id") Long id); -->
+    <select id="getReserveInfoById" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select tlr.*, su.*, su.name as reserveName
+        from t_lab_reserve tlr
+                 left join sys_user su on su.id = tlr.user_id
+                 left join t_lab tl on tl.id = tlr.lab_id
+        where tlr.id = tlr.id
+    </select>
+
+    <!-- void updateReserveStatus(@Param("id")Long id ,@Param("status")Long status); -->
+    <update id="updateReserveStatus">
+        update t_lab_reserve
+        set status =#{status}
+        where id = #{id}
+    </update>
+
+    <!-- Long countProKeyByUserId(@Param("id") Long id); -->
+    <select id="countMyReserveInfo" resultType="java.lang.Long">
+        select count(*)
+        from t_lab_reserve tlr
+        left join t_lab tl on tl.id = tlr.lab_id and tl.is_deleted = 0
+        <where>
+            tlr.user_id = #{userId} and tlr.is_deleted=0
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
+            </if>
+            <if test="reserveDate!=null and reserveDate!=''">
+                and tlr.reserve_date>=#{reserveDate}
+            </if>
+            <if test="spliceTimeId!=null and spliceTimeId!=''">
+                and tlr.splice_time_id=#{spliceTimeId}
+            </if>
+            <if test="status!=null and status!=''">
+                and tlr.status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- List<String> getProKeyByUserId(PageReserveCondition pageReserveCondition); -->
+    <select id="pageMyReserveInfo" resultType="com.cslg.reserve.vo.ReserveLabVo">
+        select tlr.reserve_date ,
+        tl.lab_name,
+        su.phone as reserveTel,
+        su.name as reserveName,
+        concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime
+        (case tlr.status
+        when 0 then '审核中'
+        when 1 then '审核不通过'
+        else '审核通过') as su.status
+        from t_lab_reserve tlr
+        left join t_lab tl on tl.id = tlr.lab_id and tl.is_deleted = 0
+        left join sys_user su on su.id = tlr.user_id
+        left join t_splice_time tst on tst.id = tlr.splice_time_id
+        <where>
+            tlr.user_id = #{userId} and tlr.is_deleted=0
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
+            </if>
+            <if test="reserveDate!=null and reserveDate!=''">
+                and tlr.reserve_date>=#{reserveDate}
+            </if>
+            <if test="spliceTimeId!=null and spliceTimeId!=''">
+                and tlr.splice_time_id=#{spliceTimeId}
+            </if>
+            <if test="status!=null and status!=''">
+                and tlr.status = #{status}
+            </if>
+        </where>
+    </select>
+
 </mapper>

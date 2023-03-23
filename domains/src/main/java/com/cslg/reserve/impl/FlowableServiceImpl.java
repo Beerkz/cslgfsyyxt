@@ -3,6 +3,9 @@ package com.cslg.reserve.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
 import com.cslg.reserve.FlowableService;
+import com.cslg.reserve.param.AuditParam;
+import com.cslg.reserve.param.StartReserveParam;
+import com.cslg.reserve.repository.ReserveRepository;
 import com.cslg.system.SysRoleService;
 import com.cslg.system.SysUserService;
 import com.cslg.system.entity.SysUser;
@@ -21,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.cslg.reserve.enums.ReserveEnums.AUDIT_MANAGER;
-import static com.cslg.reserve.enums.ReserveEnums.RESERVE;
+import static com.cslg.reserve.enums.ReserveEnums.*;
 import static com.cslg.system.enums.RoleCode.INSTRUCTOR;
 import static com.cslg.system.enums.RoleCode.MANAGER;
 
@@ -41,10 +43,11 @@ public class FlowableServiceImpl implements FlowableService {
 
     private final TaskService taskService;
 
+    private final ReserveRepository reserveRepository;
 
     //启动一个流程
     @Override
-    public Boolean startWorkFlow(String key) {
+    public Boolean startWorkFlow(StartReserveParam key) {
         //跟新流程表中的老师信息
         //assignGroupTeacher();
         //更新流程表中的
@@ -52,27 +55,79 @@ public class FlowableServiceImpl implements FlowableService {
         //第一个参数是流程的启动id（key），第二个参数叫做流程的key需要唯一，第三个参数放流程的需要用的的变量map集合
         ProcessInstance reserveLabTest1 = runtimeService
                 .startProcessInstanceByKey("reserveLabTest1",
-                        key,
+                        key.getProKey(),
                         Map.of("mine", StpUtil.getLoginId(),
-                                INSTRUCTOR.getGroupId(), identityService.createGroupQuery().groupId(INSTRUCTOR.getId()).singleResult(),
-                                MANAGER.getGroupId(), identityService.createGroupQuery().groupId(MANAGER.getId()).singleResult()
+                                INSTRUCTOR.getGroupId(), identityService.createGroupQuery().groupId(INSTRUCTOR.getId()).singleResult().getId(),
+                                MANAGER.getGroupId(), identityService.createGroupQuery().groupId(MANAGER.getId()).singleResult().getId()
                         )
 
                 );
         //自己查询获取任务并且完成
         Task task = taskService.createTaskQuery().processInstanceId(reserveLabTest1.getProcessInstanceId()).singleResult();
         taskService.complete(task.getId(), Map.of(
-                "step", AUDIT_MANAGER.getStep(),
-                "stepName", AUDIT_MANAGER.getStepName(),
-                "nextStop", AUDIT_MANAGER.getNexStep()));
+                "step", AUDIT_TEACHER.getStep(),
+                "stepName", AUDIT_TEACHER.getStepName(),
+                "nextStep", AUDIT_MANAGER.getNexStep(),
+                "nextStepName", AUDIT_MANAGER.getStepName(),
+                "labId", key.getLabId(),
+                "userId", key.getUserId(),
+                "reserveDate", key.getReserveDate()));
         return true;
     }
 
     @Override
-    public boolean completeTask(String key) {
-        Task task = taskService.createTaskQuery().processInstanceBusinessKey(key).includeTaskLocalVariables().singleResult();
+    public boolean completeTask(AuditParam auditParam) {
+        Task task = taskService.createTaskQuery().processInstanceBusinessKey(auditParam.getProKey()).includeProcessVariables().singleResult();
         Map<String, Object> processVariables = task.getProcessVariables();
-        return false;
+        if (processVariables.get("step").equals("s02")) {
+            //审批不通过
+            if (auditParam.getResult().equals(1L)) {
+                taskService.complete(task.getId(), Map.of(
+                        "step", "auditEnd",
+                        "stepName", "审核不通过",
+                        "nextStep", "auditEnd",
+                        "nextStepName", "审核不通过",
+                        "teacherReason", auditParam.getReason(),
+                        "instructorAudit", auditParam.getResult()
+                ));
+                reserveRepository.updateReserveStatus(auditParam.getId(), 1L);
+            } else {
+                taskService.complete(task.getId(), Map.of(
+                        "step", AUDIT_MANAGER.getStep(),
+                        "stepName", AUDIT_MANAGER.getStepName(),
+                        "nextStep", "success",
+                        "nextStepName", "success",
+                        "teacherReason", auditParam.getReason(),
+                        "instructorAudit", auditParam.getResult()
+                ));
+            }
+        }
+        if (processVariables.get("step").equals("s03")) {
+            if (auditParam.getResult().equals(1L)) {
+                taskService.complete(task.getId(), Map.of(
+                        "step", "auditEnd",
+                        "stepName", "审核不通过",
+                        "nextStep", "auditEnd",
+                        "nextStepName", "审核不通过",
+                        "managerReason", auditParam.getReason(),
+                        "instructorAudit", auditParam.getResult()
+
+                ));
+                reserveRepository.updateReserveStatus(auditParam.getId(), 1L);
+            } else {
+                taskService.complete(task.getId(), Map.of(
+                        "step", "success",
+                        "stepName", "审核通过",
+                        "nextStep", "success",
+                        "nextStepName", "审核通过",
+                        "mangerReason", auditParam.getReason(),
+                        "instructorAudit", auditParam.getResult()
+                ));
+                reserveRepository.updateReserveStatus(auditParam.getId(), 2L);
+
+            }
+        }
+        return true;
     }
 
     /**

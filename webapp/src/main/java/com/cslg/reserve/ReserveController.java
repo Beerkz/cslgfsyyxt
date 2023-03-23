@@ -1,15 +1,19 @@
 package com.cslg.reserve;
 
+import com.cslg.reserve.param.AuditParam;
 import com.cslg.reserve.param.PageReserveCondition;
 import com.cslg.reserve.param.StartReserveParam;
+import com.cslg.reserve.vo.ReserveLabVo;
+import com.cslg.vo.JsonPagedVO;
 import com.cslg.vo.RestBody;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Api(tags = "预约管理")
 @RestController
 @AllArgsConstructor
 @RequestMapping("secured/reserve")
@@ -34,12 +38,33 @@ public class ReserveController {
     }
 
     /**
-     * 分布预约
+     * 分页查询预约
      */
     @PostMapping("do")
     @ApiOperation("待处理")
     public RestBody<?> doReserve(@RequestBody PageReserveCondition pageReserveCondition) {
+        JsonPagedVO<ReserveLabVo> reserveLabVoJsonPagedVO = reserveService.pageAuditDoReserve(pageReserveCondition);
+        return RestBody.okData(reserveLabVoJsonPagedVO);
+    }
 
+    /**
+     * 预约处理
+     */
+    @PostMapping("audit")
+    @ApiOperation("处理任务")
+    public RestBody<?> auditReserve(@RequestBody AuditParam auditParam) {
+        reserveService.auditReserve(auditParam);
+        return RestBody.ok();
+    }
+
+
+    /**
+     * 查询我的预约
+     */
+    @PostMapping("my/reserve")
+    @ApiOperation("我的预约")
+    public RestBody<?> myReserve(@RequestBody PageReserveCondition pageReserveCondition) {
+        return RestBody.okData(reserveService.pageAuditMyReserve(pageReserveCondition));
     }
 
 }

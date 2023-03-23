@@ -11,8 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public enum ReserveEnums {
     RESERVE("r01", "s02", "发起申请"),
-    AUDIT_TEACHER("s02", "s03", "发起申请"),
-    AUDIT_MANAGER("s03", "", "发起申请");
+    AUDIT_TEACHER("s02", "s03", "教师审批"),
+    AUDIT_MANAGER("s03", "s04", "实验室管理员审批");
     private String step;
     private String nexStep;
     private String stepName;
