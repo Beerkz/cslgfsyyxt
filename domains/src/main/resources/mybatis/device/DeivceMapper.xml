@@ -26,17 +26,61 @@
     </select>
 
     <update id="deleteLabAndDeviceRelationship">
-        update t_lab_device set is_deleted = 1
-        where lab_id =#{id}
+        update t_lab_device
+        set is_deleted = 1
+        where device_id = #{id}
     </update>
 
     <insert id="insertLabAndDeviceRelationship">
-        insert into t_lab_device(
-            lab_id,
-            device_id
-        ) values(
-            #{labId},
-            #{deviceId}
-            )
+        insert into t_lab_device(lab_id,
+                                 device_id)
+        values (#{labId},
+                #{deviceId})
     </insert>
+
+    <!-- Integer insertDevice(DeviceEntity deviceEntity); -->
+    <insert id="insertDevice" useGeneratedKeys="true" keyProperty="id">
+        insert into t_device(device_name,
+                             device_usage,
+                             device_param,
+                             device_principle,
+                             device_model,
+                             device_url)
+        values (#{deviceName},
+                #{deviceUsage},
+                #{deviceParam},
+                #{devicePrinciple},
+                #{deviceModel},
+                #{deviceUrl})
+    </insert>
+
+    <select id="countPageDevice" resultType="java.lang.Long">
+        select count(*)
+        from t_device td
+        left join t_lab_device tld on tld.device_id = td.id
+        left join t_lab tl on tld.lab_id = tl.id
+        <where>
+            td.is_deleted!=1
+            <if test="deviceName!=null and deviceName!=''">
+                td.device_name like concat(#{deviceName},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- List<DeviceVo> pageDevice(PageDeviceCondition pageDeviceCondition); -->
+    <select id="pageDevice" resultType="com.cslg.deivce.vo.DeviceVo">
+        select td.*,tl.lab_name,tl.id as labId
+        from t_device td
+        left join t_lab_device tld on tld.device_id = td.id
+        left join t_lab tl on tld.lab_id = tl.id
+        <where>
+            td.is_deleted!=1
+            <if test="deviceName!=null and deviceName!=''">
+                td.device_name like concat(#{deviceName},'%')
+            </if>
+        </where>
+        <if test="start>0 and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
 </mapper>

@@ -9,5 +9,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class DeviceEntity extends BaseEntity {
-
+    private String deviceName;
+    private String deviceUsage;
+    private String deviceParam;
+    private String devicePrinciple;
+    private String deviceModel;
+    private String project;
+    private String status;
+    private String deviceUrl;
 }
