@@ -87,6 +87,7 @@ public class FlowableServiceImpl implements FlowableService {
                         "stepName", "审核不通过",
                         "nextStep", "auditEnd",
                         "nextStepName", "审核不通过",
+                        "teacherAuditId", StpUtil.getLoginId(),
                         "teacherReason", auditParam.getReason(),
                         "instructorAudit", auditParam.getResult()
                 ));
@@ -97,6 +98,7 @@ public class FlowableServiceImpl implements FlowableService {
                         "stepName", AUDIT_MANAGER.getStepName(),
                         "nextStep", "success",
                         "nextStepName", "success",
+                        "teacherAuditId", StpUtil.getLoginId(),
                         "teacherReason", auditParam.getReason(),
                         "instructorAudit", auditParam.getResult()
                 ));
@@ -109,6 +111,7 @@ public class FlowableServiceImpl implements FlowableService {
                         "stepName", "审核不通过",
                         "nextStep", "auditEnd",
                         "nextStepName", "审核不通过",
+                        "managerAuditId", StpUtil.getLoginId(),
                         "managerReason", auditParam.getReason(),
                         "instructorAudit", auditParam.getResult()
 
@@ -120,7 +123,8 @@ public class FlowableServiceImpl implements FlowableService {
                         "stepName", "审核通过",
                         "nextStep", "success",
                         "nextStepName", "审核通过",
-                        "mangerReason", auditParam.getReason(),
+                        "managerAuditId", StpUtil.getLoginId(),
+                        "managerReason", auditParam.getReason(),
                         "instructorAudit", auditParam.getResult()
                 ));
                 reserveRepository.updateReserveStatus(auditParam.getId(), 2L);

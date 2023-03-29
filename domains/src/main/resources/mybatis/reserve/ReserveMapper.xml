@@ -161,15 +161,17 @@
 
     <!-- List<String> getProKeyByUserId(PageReserveCondition pageReserveCondition); -->
     <select id="pageMyReserveInfo" resultType="com.cslg.reserve.vo.ReserveLabVo">
-        select tlr.reserve_date ,
+        select
+        tlr.id,
+        tlr.reserve_date ,
         tl.lab_name,
         su.phone as reserveTel,
         su.name as reserveName,
-        concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime
+        concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime,
         (case tlr.status
         when 0 then '审核中'
         when 1 then '审核不通过'
-        else '审核通过') as su.status
+        else '审核通过' end) as statusName
         from t_lab_reserve tlr
         left join t_lab tl on tl.id = tlr.lab_id and tl.is_deleted = 0
         left join sys_user su on su.id = tlr.user_id
@@ -191,4 +193,24 @@
         </where>
     </select>
 
+
+    <!-- ReserveInfoVo getMyReserveInfoById(@Param("id") Long id); -->
+    <select id="getMyReserveInfoById" resultType="com.cslg.reserve.vo.ReserveInfoVo">
+        select concat(date_format(tst.begin_time, '%H:%i'), '-', date_format(tst.end_time, '%H:%i')) as spliceTime,
+               tl.lab_url,
+               tl.lab_name,
+               tlr.reason,
+               tlr.id,
+               tlr.reserve_date,
+               (case tlr.status
+                    when 0 then '审核中'
+                    when 1 then '审核不通过'
+                    else '审核通过' end)                                                                 as statusName,
+               tlr.pro_key
+        from t_lab_reserve tlr
+                 left join t_lab tl on tl.id = tlr.lab_id
+                 left join t_splice_time tst on tst.id = tlr.splice_time_id
+        where tlr.is_deleted = 0
+          and tlr.id = #{id}
+    </select>
 </mapper>

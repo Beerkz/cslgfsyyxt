@@ -9,6 +9,7 @@ import com.cslg.vo.RestBody;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +66,12 @@ public class ReserveController {
     @ApiOperation("我的预约")
     public RestBody<?> myReserve(@RequestBody PageReserveCondition pageReserveCondition) {
         return RestBody.okData(reserveService.pageAuditMyReserve(pageReserveCondition));
+    }
+
+    @GetMapping("my/reserve/info/{id}")
+    @ApiOperation("我的预约详细信息")
+    public RestBody<?> myReserveInfo(@PathVariable("id") Long id) {
+        return RestBody.okData(reserveService.getMyReserveInfo(id));
     }
 
 }

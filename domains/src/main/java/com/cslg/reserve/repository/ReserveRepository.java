@@ -2,6 +2,7 @@ package com.cslg.reserve.repository;
 
 import com.cslg.reserve.param.PageReserveCondition;
 import com.cslg.reserve.param.StartReserveParam;
+import com.cslg.reserve.vo.ReserveInfoVo;
 import com.cslg.reserve.vo.ReserveLabVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -71,5 +72,10 @@ public interface ReserveRepository {
      * 根据用户id查询所有预约流程的proKey
      */
     List<ReserveLabVo> pageMyReserveInfo(PageReserveCondition pageReserveCondition);
+
+    /**
+     * 根据预约id查询预约信息
+     */
+    ReserveInfoVo getMyReserveInfoById(@Param("id") Long id);
 
 }

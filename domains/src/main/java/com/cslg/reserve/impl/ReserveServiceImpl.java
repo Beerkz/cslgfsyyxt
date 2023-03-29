@@ -9,17 +9,17 @@ import com.cslg.reserve.param.AuditParam;
 import com.cslg.reserve.param.PageReserveCondition;
 import com.cslg.reserve.param.StartReserveParam;
 import com.cslg.reserve.repository.ReserveRepository;
+import com.cslg.reserve.vo.ReserveInfoVo;
 import com.cslg.reserve.vo.ReserveLabVo;
 import com.cslg.vo.JsonPagedVO;
-import io.netty.handler.timeout.IdleStateEvent;
 import lombok.AllArgsConstructor;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.IdentityService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.Group;
-import org.flowable.idm.api.GroupQuery;
 import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
 
@@ -64,10 +64,10 @@ public class ReserveServiceImpl implements ReserveService {
         ////流程启动
         Boolean start = flowableService.startWorkFlow(startReserveParam);
         ////启动成功
-        if (start) {
-            reserveRepository.updateReserve(startReserveParam);
-        }
-        return true;
+        //if (start) {
+        //    reserveRepository.updateReserve(startReserveParam);
+        //}
+        return start;
     }
 
     /**
@@ -137,5 +137,31 @@ public class ReserveServiceImpl implements ReserveService {
             reserveLabVos = Collections.emptyList();
         }
         return new JsonPagedVO<>(reserveLabVos, count);
+    }
+
+    /**
+     * 获取预约信息
+     *
+     * @param id 预约id
+     * @return
+     */
+    @Override
+    public ReserveInfoVo getMyReserveInfo(Long id) {
+        ReserveInfoVo reserveInfoVo = reserveRepository.getMyReserveInfoById(id);
+        HistoricProcessInstance historicProcessInstance = historyService
+                .createHistoricProcessInstanceQuery()
+                .processInstanceBusinessKey(reserveInfoVo.getProKey())
+                .includeProcessVariables()
+                .singleResult();
+        Map<String, Object> processVariables = historicProcessInstance.getProcessVariables();
+        if (processVariables.get("teacherReason") != null) {
+            reserveInfoVo.setTeacherAuditReason(String.valueOf(processVariables.get("teacherReason")));
+        }
+        if (processVariables.get("managerReason") != null) {
+            reserveInfoVo.setManagerAuditReason(String.valueOf(processVariables.get("managerReason")));
+        }
+        String stepName = (String) processVariables.get("stepName");
+        reserveInfoVo.setStepName(stepName);
+        return reserveInfoVo;
     }
 }
