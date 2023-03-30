@@ -95,4 +95,11 @@ public interface LabRepository {
      * @param id
      */
     void deleteLabById(@Param("id") Long id);
+
+    /**
+     * 获取所有实验室信息
+     *
+     * @return 实验室信息
+     */
+    List<LabVo> getAllLab();
 }

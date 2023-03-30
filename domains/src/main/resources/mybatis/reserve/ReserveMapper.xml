@@ -89,7 +89,13 @@
                 #{item}
             </foreach>
             <if test="params.labName!=null and params.labName!=''">
-                and tl.lab_name like concat(#{params})
+                and tl.lab_name like concat(#{params.labName},'%')
+            </if>
+            <if test="params.username!=null and params.userName!=''">
+                and su.username like concat(#{params.labName},'%')
+            </if>
+            <if test="params.phone!=null and params.phone!=''">
+                and su.phone like concat(#{params.phone},'%')
             </if>
         </where>
     </select>
@@ -114,6 +120,12 @@
             </foreach>
             <if test="params.labName!=null and params.labName!=''">
                 and tl.lab_name like concat(#{params})
+            </if>
+            <if test="params.username!=null and params.userName!=''">
+                and su.username like concat(#{params.labName},'%')
+            </if>
+            <if test="params.phone!=null and params.phone!=''">
+                and su.phone like concat(#{params.phone},'%')
             </if>
         </where>
         <if test="params.start!=null and params.limit>0">

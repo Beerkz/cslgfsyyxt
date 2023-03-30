@@ -196,4 +196,11 @@
         set is_deleted = 1
         where id = #{id}
     </update>
+
+    <!-- List<LabEntity> getAllLab(); -->
+    <select id="getAllLab" resultMap="labSpliceTimeIds">
+        select tl.*
+        from t_lab tl
+        where tl.is_deleted = 0
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.cslg.lab;
 
+import com.cslg.lab.entity.LabEntity;
 import com.cslg.lab.entity.LabSpliceTimeEntity;
 import com.cslg.lab.vo.LabSpliceTimeVo;
 import com.cslg.lab.vo.LabVo;
@@ -41,5 +42,7 @@ public interface LabService {
     LabVo getLabInfo(Long id);
 
     void deleteInfo(Long id);
+
+    List<LabVo> getAllLab();
 
 }

@@ -61,4 +61,11 @@ public class LabController {
         labService.deleteInfo(id);
         return RestBody.ok();
     }
+
+    @PostMapping("all/lab")
+    @ApiOperation("实验室信息")
+    public RestBody<?> getAllLab() {
+        List<LabVo> allLab = labService.getAllLab();
+        return RestBody.okData(allLab);
+    }
 }

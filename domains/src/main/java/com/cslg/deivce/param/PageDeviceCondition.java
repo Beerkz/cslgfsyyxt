@@ -10,4 +10,6 @@ import lombok.ToString;
 @ToString
 public class PageDeviceCondition extends AbstractPagedCondition {
     private String deviceName;
+
+    private String labName;
 }

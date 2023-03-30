@@ -12,26 +12,38 @@ public class PageReserveCondition extends AbstractPagedCondition {
     /**
      * 实验室名称
      */
-    public String labName;
+    private String labName;
 
     /**
      * 预约时间
      */
-    public String reserveDate;
+    private String reserveDate;
 
     /**
      * 预约时间段
      */
-    public Long spliceTimeId;
+    private Long spliceTimeId;
 
     /**
      * 用户id
      */
-    public Long userId;
+    private Long userId;
 
     /**
      * 状态
      */
-    public String status;
+    private String status;
+
+    /**
+     * 电话
+     */
+
+    private String phone;
+
+    /**
+     * 预约人姓名
+     */
+    private String username;
+
 
 }

@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.cslg.deivce.entity.DeviceEntity;
 import com.cslg.deivce.repository.DeviceRepository;
 import com.cslg.lab.LabService;
+import com.cslg.lab.entity.LabEntity;
 import com.cslg.lab.entity.LabSpliceTimeEntity;
 import com.cslg.lab.param.PageLabCondition;
 import com.cslg.lab.repository.LabRepository;
@@ -26,14 +27,21 @@ import java.util.stream.Collectors;
 public class LabServiceImpl implements LabService {
     private final LabRepository labRepository;
     private final DeviceRepository deviceRepository;
+
+    /**
+     * 分页查询实验室信息
+     *
+     * @param pageLabCondition 分页查询条件
+     * @return
+     */
     @Override
     public JsonPagedVO<PageLabVo> pageLab(PageLabCondition pageLabCondition) {
         final List<PageLabVo> pageLabVos;
         Long count = labRepository.countPage(pageLabCondition);
-        if (count>0){
+        if (count > 0) {
             pageLabVos = labRepository.page(pageLabCondition);
 
-        }else {
+        } else {
             pageLabVos = Collections.emptyList();
         }
 
@@ -70,6 +78,11 @@ public class LabServiceImpl implements LabService {
         }
     }
 
+    /**
+     * 获取实验室开放的时间段信息
+     *
+     * @return
+     */
     @Override
     public List<LabSpliceTimeVo> selectSpliceTime() {
         List<LabSpliceTimeEntity> allSpliceTime = labRepository.getAllSpliceTime();
@@ -82,6 +95,12 @@ public class LabServiceImpl implements LabService {
         return collect;
     }
 
+    /**
+     * 获取单个实验室的信息
+     *
+     * @param id 实验室id
+     * @return
+     */
     @Override
     public LabVo getLabInfo(Long id) {
         LabVo labInfo = labRepository.getLabInfo(id);
@@ -96,5 +115,16 @@ public class LabServiceImpl implements LabService {
     @Override
     public void deleteInfo(Long id) {
         labRepository.deleteLabById(id);
+    }
+
+    /**
+     * 获取所有实验室信息
+     *
+     * @return
+     */
+    @Override
+    public List<LabVo> getAllLab() {
+        List<LabVo> allLab = labRepository.getAllLab();
+        return allLab;
     }
 }
