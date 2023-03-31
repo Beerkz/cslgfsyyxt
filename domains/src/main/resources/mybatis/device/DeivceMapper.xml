@@ -79,7 +79,7 @@
                 td.device_name like concat(#{deviceName},'%')
             </if>
         </where>
-        <if test="start>0 and limit!=null">
+        <if test="start!=null and limit>0">
             limit #{start},#{limit}
         </if>
     </select>

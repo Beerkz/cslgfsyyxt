@@ -7,6 +7,7 @@ import com.cslg.deivce.repository.DeviceRepository;
 import com.cslg.deivce.vo.DeviceVo;
 import com.cslg.vo.JsonPagedVO;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -40,11 +41,14 @@ public class DeviceServiceImpl implements DeviceService {
         if (deviceVo.getId() != null) {
             deviceRepository.deleteLabAndDeviceRelationship(deviceVo.getId());
             deviceRepository.insertDevice(deviceVo);
-            deviceRepository.insertLabAndDeviceRelationship(deviceVo.getLabId(), deviceVo.getId());
+            if (deviceVo.getLabId() != null && !StringUtils.isEmpty(deviceVo.getLabName())) {
+                deviceRepository.insertLabAndDeviceRelationship(deviceVo.getLabId(), deviceVo.getId());
+            }
         } else {
             deviceRepository.insertDevice(deviceVo);
-            if (deviceVo.getLabId() != null) {
+            if (deviceVo.getLabId() != null && !StringUtils.isEmpty(deviceVo.getLabName())) {
                 deviceRepository.insertLabAndDeviceRelationship(deviceVo.getLabId(), deviceVo.getId());
+
             }
         }
         return null;
