@@ -104,6 +104,7 @@
     <select id="pageReserveInfo" resultType="com.cslg.reserve.vo.ReserveLabVo">
         select tl.lab_name,
         tlr.id,
+        tlr.reason,
         tlr.reserve_date as reserveDate,
         concat(date_format(tst.begin_time,'%H:%i'),'-',date_format(tst.end_time,'%H:%i')) as spliceTime,
         su.name as reserveName,
@@ -128,6 +129,7 @@
                 and su.phone like concat(#{params.phone},'%')
             </if>
         </where>
+        order by tlr.create_time
         <if test="params.start!=null and params.limit>0">
             limit #{params.start},#{params.limit}
         </if>
@@ -203,6 +205,11 @@
                 and tlr.status = #{status}
             </if>
         </where>
+        order by tlr.create_time
+        <if test="start!=null and limit>0">
+            limit #{start},#{limit}
+        </if>
+
     </select>
 
 

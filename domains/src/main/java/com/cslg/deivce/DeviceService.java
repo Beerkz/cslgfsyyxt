@@ -22,4 +22,16 @@ public interface DeviceService {
      * @return
      */
     Integer insertOrUpdateDevice(DeviceVo deviceVo);
+
+
+    /**
+     * 查看设备详细信息
+     */
+    DeviceVo getDeviceInfo(Long id);
+
+    /**
+     * 删除设备
+     */
+    Integer deleteDevice(Long id );
+
 }

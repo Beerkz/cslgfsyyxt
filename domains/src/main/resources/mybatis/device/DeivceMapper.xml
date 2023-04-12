@@ -62,25 +62,52 @@
         <where>
             td.is_deleted!=1
             <if test="deviceName!=null and deviceName!=''">
-                td.device_name like concat(#{deviceName},'%')
+                and td.device_name like concat(#{deviceName},'%')
+            </if>
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
             </if>
         </where>
     </select>
 
     <!-- List<DeviceVo> pageDevice(PageDeviceCondition pageDeviceCondition); -->
     <select id="pageDevice" resultType="com.cslg.deivce.vo.DeviceVo">
-        select td.*,tl.lab_name,tl.id as labId
+        select td.*
+        ,tl.id as labId
+        ,ifnull(tl.lab_name,'未分配') as lab_name
         from t_device td
         left join t_lab_device tld on tld.device_id = td.id
         left join t_lab tl on tld.lab_id = tl.id
+
         <where>
             td.is_deleted!=1
             <if test="deviceName!=null and deviceName!=''">
-                td.device_name like concat(#{deviceName},'%')
+                and td.device_name like concat(#{deviceName},'%')
+            </if>
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
             </if>
         </where>
+        order by td.create_time desc
         <if test="start!=null and limit>0">
             limit #{start},#{limit}
         </if>
     </select>
+
+    <!--DeviceVo getDeviceVo(Long id);-->
+    <select id="getDeviceVo" resultType="com.cslg.deivce.vo.DeviceVo">
+        select td.*,tl.lab_name,tl.id as labId,ifnull(tl.lab_name,'未分配')
+        from t_device td
+        left join t_lab_device tld on tld.device_id = td.id
+        left join t_lab tl on tld.lab_id = tl.id
+        <where>
+            td.is_deleted!=1 and td.id = #{id}
+        </where>
+    </select>
+
+    <!--Integer deleteDevice(@Param("id") Long id);-->
+    <update id="deleteDevice">
+        update t_device set is_deleted = 1
+        where id = #{id}
+    </update>
 </mapper>

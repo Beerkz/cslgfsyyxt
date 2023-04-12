@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cslg.deivce.repository.NeedDeviceRepository">
+    <sql id="deviceColumSql">
+        id,
+        lab_id,
+        device_name,
+        device_usage,
+        deivce_param,
+        device_principle,
+        provider_id,
+        device_model,
+        project,
+        create_time,
+        update_time,
+        create_id,
+        update_id,
+        device_urlw
+    </sql>
+    <!--List<NeedDeviceEntity> countPageNeedDevice(PageNeedDeviceCondition pageNeedDeviceCondition);-->
+    <select id="countPageNeedDevice" resultType="java.lang.Long">
+        select count(*)
+        from t_need_device td
+        <where>
+            td.is_deleted!=1
+            <if test="deviceName!=null and deviceName!=''">
+                and td.device_name like concat(#{deviceName},'%')
+            </if>
+        </where>
+    </select>
+    <!--List<NeedDeviceEntity> pageNeedDevice(PageNeedDeviceCondition pageNeedDeviceCondition);-->
+    <select id="pageNeedDevice" resultType="com.cslg.deivce.entity.NeedDeviceEntity">
+        select td.*
+        from t_lab_device td
+
+        <where>
+            td.is_deleted!=1
+            <if test="deviceName!=null and deviceName!=''">
+                and td.device_name like concat(#{deviceName},'%')
+            </if>
+            <if test="labName!=null and labName!=''">
+                and tl.lab_name like concat(#{labName},'%')
+            </if>
+        </where>
+        order by td.create_time desc
+        <if test="start!=null and limit>0">
+            limit #{start},#{limit}
+        </if>
+    </select>
+</mapper>

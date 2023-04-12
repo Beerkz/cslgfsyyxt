@@ -52,6 +52,10 @@ public class ReserveLabVo extends LabEntity {
      * 流程的key
      */
     private String proKey;
+    /**
+     * 理由
+     */
+    private String reason;
 
 
 }

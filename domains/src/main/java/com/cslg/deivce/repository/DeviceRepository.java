@@ -24,5 +24,10 @@ public interface DeviceRepository {
 
     Long countPageDevice(PageDeviceCondition pageDeviceCondition);
 
+    DeviceVo getDeviceVo(@Param("id") Long id);
+
+    Integer deleteDevice(@Param("id") Long id);
+
+
 
 }

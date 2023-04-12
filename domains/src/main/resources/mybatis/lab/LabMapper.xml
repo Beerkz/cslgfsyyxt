@@ -69,6 +69,7 @@
                 and tl.lab_name like concat(#{labName},'%')
             </if>
         </where>
+            order by tl.create_time desc
         <if test="start !=null and limit >0">
             limit #{start},#{limit}
         </if>

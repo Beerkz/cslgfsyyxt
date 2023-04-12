@@ -40,17 +40,34 @@ public class DeviceServiceImpl implements DeviceService {
     public Integer insertOrUpdateDevice(DeviceVo deviceVo) {
         if (deviceVo.getId() != null) {
             deviceRepository.deleteLabAndDeviceRelationship(deviceVo.getId());
+            deviceRepository.deleteDevice(deviceVo.getId());
             deviceRepository.insertDevice(deviceVo);
-            if (deviceVo.getLabId() != null && !StringUtils.isEmpty(deviceVo.getLabName())) {
+            if (deviceVo.getLabId() != null) {
                 deviceRepository.insertLabAndDeviceRelationship(deviceVo.getLabId(), deviceVo.getId());
             }
         } else {
             deviceRepository.insertDevice(deviceVo);
-            if (deviceVo.getLabId() != null && !StringUtils.isEmpty(deviceVo.getLabName())) {
+            if (deviceVo.getLabId() != null) {
                 deviceRepository.insertLabAndDeviceRelationship(deviceVo.getLabId(), deviceVo.getId());
 
             }
         }
         return null;
+    }
+
+    /**
+     * 根据设备id获取设备信息
+     * @param id 设备id
+     * @return 设备信息
+     */
+    @Override
+    public DeviceVo getDeviceInfo(Long id) {
+        return deviceRepository.getDeviceVo(id);
+    }
+
+    @Override
+    public Integer deleteDevice(Long id) {
+        Integer integer = deviceRepository.deleteDevice(id);
+        return integer;
     }
 }

@@ -7,10 +7,7 @@ import com.cslg.vo.RestBody;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("secured/device")
 @RestController
@@ -37,6 +34,20 @@ public class DeviceController {
     @ApiOperation("修改")
     public RestBody<?> update(@RequestBody DeviceVo deviceVo) {
         deviceService.insertOrUpdateDevice(deviceVo);
+        return RestBody.ok();
+    }
+
+    @GetMapping("info/{id}")
+    @ApiOperation("查看设备详细信息")
+    public RestBody<?> getDeviceInfo(@PathVariable Long id){
+        DeviceVo deviceInfo = deviceService.getDeviceInfo(id);
+        return RestBody.okData(deviceInfo);
+    }
+
+    @GetMapping("delete/{id}")
+    @ApiOperation("删除设备")
+    public RestBody<?> deleteDevice(@PathVariable Long id){
+        deviceService.deleteDevice(id);
         return RestBody.ok();
     }
 }
