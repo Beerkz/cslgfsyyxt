@@ -9,10 +9,10 @@ import com.cslg.vo.RestBody;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.apache.ibatis.annotations.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.FileOutputStream;
 
 @Api(tags = "预约管理")
 @RestController
@@ -72,6 +72,13 @@ public class ReserveController {
     @ApiOperation("我的预约详细信息")
     public RestBody<?> myReserveInfo(@PathVariable("id") Long id) {
         return RestBody.okData(reserveService.getMyReserveInfo(id));
+    }
+
+    @PostMapping("export/reserve/{id}")
+    @ApiOperation("导出预约凭证")
+    public ResponseEntity<byte[]> exportMyReserve(@PathVariable("id") Long id){
+
+        return reserveService.exportReserve(id);
     }
 
 }

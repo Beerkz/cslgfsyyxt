@@ -6,7 +6,9 @@ import com.cslg.reserve.param.StartReserveParam;
 import com.cslg.reserve.vo.ReserveInfoVo;
 import com.cslg.reserve.vo.ReserveLabVo;
 import com.cslg.vo.JsonPagedVO;
+import org.springframework.http.ResponseEntity;
 
+import java.io.FileOutputStream;
 import java.util.List;
 
 public interface ReserveService {
@@ -39,4 +41,12 @@ public interface ReserveService {
      * @return
      */
     ReserveInfoVo getMyReserveInfo(Long id);
+
+    /**
+     * 导出excel表格
+     *
+     * @param id
+     * @return
+     */
+    ResponseEntity<byte[]> exportReserve(Long id);
 }

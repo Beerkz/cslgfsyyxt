@@ -55,6 +55,9 @@ public class SysUser extends BaseEntity {
     @ApiModelProperty(value = "状态（1：正常 0：停用）")
     @TableField("status")
     private Integer status;
+    @ApiModelProperty(value = "邮箱")
+    @TableField("email")
+    private String email;
 
     @TableField(exist = false)
     private List<SysRole> roleList;

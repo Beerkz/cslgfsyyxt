@@ -1,5 +1,6 @@
 package com.cslg.reserve.impl;
 
+import cn.afterturn.easypoi.word.WordExportUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -11,8 +12,11 @@ import com.cslg.reserve.param.StartReserveParam;
 import com.cslg.reserve.repository.ReserveRepository;
 import com.cslg.reserve.vo.ReserveInfoVo;
 import com.cslg.reserve.vo.ReserveLabVo;
+import com.cslg.system.entity.SysUser;
+import com.cslg.system.repository.SysUserRepository;
 import com.cslg.vo.JsonPagedVO;
 import lombok.AllArgsConstructor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.IdentityService;
 import org.flowable.engine.RuntimeService;
@@ -21,12 +25,15 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.Group;
 import org.flowable.task.api.Task;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +51,8 @@ public class ReserveServiceImpl implements ReserveService {
     private final RuntimeService runtimeService;
 
     private final HistoryService historyService;
+
+    private final SysUserRepository sysUserRepository;
 
     @Override
     public List<ReserveLabVo> pageReserveLab(PageReserveCondition pageReserveCondition) {
@@ -163,5 +172,39 @@ public class ReserveServiceImpl implements ReserveService {
         String stepName = (String) processVariables.get("stepName");
         reserveInfoVo.setStepName(stepName);
         return reserveInfoVo;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> exportReserve(Long id) {
+        ReserveInfoVo reserveInfoVo = reserveRepository.getMyReserveInfoById(id);
+        SysUser user = sysUserRepository.getUserById(reserveInfoVo.getUserId());
+        Map<String, Object> detail = Map.of("id", String.valueOf(id),
+                "name", user.getUsername(),
+                "labName", reserveInfoVo.getLabName(),
+                "spliceTime", reserveInfoVo.getSpliceTime(),
+                "reserveDate", reserveInfoVo.getReserveDate(),
+                "reason", reserveInfoVo.getReason()
+        );
+        try {
+
+            File rootFile = new File((ResourceUtils.getURL("classpath:").getPath()));
+            File templateFile = new File(rootFile, "/model/model.docx");
+            XWPFDocument doc = WordExportUtil.exportWord07(
+                    templateFile.getPath(),
+                    detail);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            doc.write(byteArrayOutputStream);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+            headers.add("Content-Disposition", "attachment; filename=" + "预约凭证");
+            headers.add("Pragma", "no-cache");
+            headers.add("Expires", "0");
+            headers.add("Last-Modified", new Date().toString());
+            headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_OCTET_STREAM).body(byteArrayOutputStream.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

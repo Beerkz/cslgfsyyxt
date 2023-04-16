@@ -32,20 +32,106 @@
     <!--List<NeedDeviceEntity> pageNeedDevice(PageNeedDeviceCondition pageNeedDeviceCondition);-->
     <select id="pageNeedDevice" resultType="com.cslg.deivce.entity.NeedDeviceEntity">
         select td.*
-        from t_lab_device td
+        from t_need_device td
 
         <where>
             td.is_deleted!=1
             <if test="deviceName!=null and deviceName!=''">
                 and td.device_name like concat(#{deviceName},'%')
             </if>
-            <if test="labName!=null and labName!=''">
-                and tl.lab_name like concat(#{labName},'%')
-            </if>
         </where>
         order by td.create_time desc
         <if test="start!=null and limit>0">
             limit #{start},#{limit}
         </if>
+    </select>
+
+    <!--Integer insertNeedDevice(NeedDeviceVo deviceVo);-->
+    <insert id="insertNeedDevice" useGeneratedKeys="true" keyProperty="id">
+        insert into t_need_device(device_name,
+                             device_usage,
+                             device_param,
+                             device_principle,
+                             device_model,
+                             device_url)
+        values (#{deviceName},
+                #{deviceUsage},
+                #{deviceParam},
+                #{devicePrinciple},
+                #{deviceModel},
+                #{deviceUrl})
+
+    </insert>
+    <!--Integer insertNeedDeviceAndProviderRelationship(@Param("userId") Long userId,@Param("needId") Long needId);-->
+    <insert id="insertNeedDeviceAndProviderRelationship" keyProperty="id" useGeneratedKeys="true">
+        insert into t_provider_device(
+                                     t_need_device_id,
+                                      t_provider_id,
+                                     t_order_id,
+                                      status
+        ) values (
+                 #{tNeedDeviceId},
+                 #{tProviderId},
+                  #{tOrderId},
+                  0
+                        )
+    </insert>
+
+    <!--Integer deleteNeedDevice(NeedDeviceVo deviceVo);-->
+    <update id="updateNeedDevice">
+        update t_need_device
+        <set>
+            <if test="deviceName!=null and deviceName!=''">
+                device_name=#{deviceName},
+            </if>
+            <if test="deviceUsage!=null and deviceUsage!=''">
+                device_usage=#{deviceUsage},
+            </if>
+            <if test="deviceParam!=null and deviceParam!=''">
+                device_param=#{deviceParam},
+            </if>
+            <if test="devicePrinciple!=null and devicePrinciple!=''">
+                device_principle=#{devicePrinciple},
+            </if>
+            <if test="deviceModel!=null and deviceModel!=''">
+                device_model=#{deviceModel},
+            </if>
+            <if test="deviceUrl!=null and deviceUrl!=''">
+                device_url=#{deviceUrl},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--Integer deleteNeedDevice(@Param("id") Long id);-->
+    <update id="deleteNeedDevice">
+        update t_need_device
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+    <!--NeedDeviceVo getNeedDeviceInfoVo(@Param("id") Long id);-->
+    <select id="getNeedDeviceInfoVo" resultType="com.cslg.deivce.vo.NeedDeviceVo">
+        select tnd.*
+        from t_need_device tnd
+        where tnd.id = #{id}
+    </select>
+
+    <select id="getProviderInfo" resultType="com.cslg.system.entity.SysUser">
+        select su.*
+        from sys_user su
+        inner join t_provider_device tpd on tpd.t_need_device_id = #{id}
+        where su.id = tpd.t_provider_id
+    </select>
+
+    <!--Integer updateNeedDeviceStatus(@Param("id") Long id);-->
+    <update id="updateNeedDeviceStatus">
+        update t_provider_device set status = 1
+        where t_order_id = #{id}
+    </update>
+    <!--Integer countNeedDeviceStatus(@Param("id") Long id);-->
+    <select id="countNeedDeviceStatus" resultType="java.lang.Integer">
+        select count(*)
+        from t_provider_device
+        where t_need_device_id = #{needId} and t_provider_id = #{providerId}
     </select>
 </mapper>

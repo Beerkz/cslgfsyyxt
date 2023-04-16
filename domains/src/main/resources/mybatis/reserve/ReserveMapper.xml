@@ -216,6 +216,7 @@
     <!-- ReserveInfoVo getMyReserveInfoById(@Param("id") Long id); -->
     <select id="getMyReserveInfoById" resultType="com.cslg.reserve.vo.ReserveInfoVo">
         select concat(date_format(tst.begin_time, '%H:%i'), '-', date_format(tst.end_time, '%H:%i')) as spliceTime,
+               tlr.user_id,
                tl.lab_url,
                tl.lab_name,
                tlr.reason,
